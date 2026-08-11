@@ -5,9 +5,6 @@ import textwrap
 # Configuration for the Sphinx documentation builder.
 # All configuration specific to your project should be done in this file.
 #
-# If you're new to Sphinx and don't want any advanced or custom features,
-# just go through the items marked 'TODO'.
-#
 # A complete list of built-in Sphinx configuration values:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 #
@@ -20,11 +17,10 @@ import textwrap
 #######################
 
 # Project name
-# TODO: Update with the official name of your project or product (e.g., "Ubuntu Server")
-project = "Project"
+project = "{{ cookiecutter.project_name }}"
 
 # Author name; used in the default copyright statement in the page footer
-author = "Canonical Ltd."
+author = "{{ cookiecutter.author }}"
 
 # The year in the copyright statement
 copyright = f"{datetime.date.today().year}"
@@ -37,82 +33,61 @@ html_title = project + " documentation"
 ogp_site_url = os.environ.get("READTHEDOCS_CANONICAL_URL", "/")
 
 # Preview name of the documentation website
-# TODO: To use a different name for the project in previews, update the next line.
-ogp_site_name = project
+ogp_site_name = "{{ cookiecutter.ogp_site_name }}"
 
 # Preview image URL
-# TODO: To customise the preview image, update the next line.
-ogp_image = "https://assets.ubuntu.com/v1/cc828679-docs_illustration.svg"
-
+ogp_image = "{{ cookiecutter.ogp_image }}"
+{% if cookiecutter.html_favicon %}
 # Product favicon; shown in bookmarks, browser tabs, etc.
-# TODO: To customise the favicon, uncomment and update the next line.
-# html_favicon = "_static/favicon.png"
-
+html_favicon = "{{ cookiecutter.html_favicon }}"
+{% endif %}
 # Dictionary of values to pass into the Sphinx context for all pages:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-html_context
 html_context = {
     # Product page URL; can be different from product docs URL
-    # TODO: Change to your product website URL, dropping the 'https://' prefix (e.g.,
-    #       'ubuntu.com/lxd'). If there's no such website, remove the {{ product_page }}
-    #       link from the _templates/header.html file.
-    "product_page": "",
+    "product_page": "{{ cookiecutter.product_page }}",
+{% if cookiecutter.product_tag %}
     # Product tag image; the orange part of your logo, shown in the page header
-    # TODO: To add a tag image, uncomment and update as needed.
-    # 'product_tag': '_static/tag.png',
+    "product_tag": "{{ cookiecutter.product_tag }}",
+{% endif %}
     # Your Discourse instance URL
-    # TODO: Change to your Discourse instance URL or leave empty.
-    "discourse": "",
+    "discourse": "{{ cookiecutter.discourse }}",
     # Your Mattermost channel URL
-    # TODO: Change to your Mattermost channel URL or leave empty.
-    "mattermost": "",
+    "mattermost": "{{ cookiecutter.mattermost }}",
     # Your Matrix channel URL
-    # TODO: Change to your Matrix channel URL or leave empty.
-    "matrix": "",
-    # Your documentation GitHub repository URL If set, links for viewing the
-    # documentation source files and creating GitHub issues are added at the bottom of
-    # each page.
-    # TODO: Change to your documentation GitHub repository URL or leave empty.
-    "github_url": "",
+    "matrix": "{{ cookiecutter.matrix }}",
+    # Your documentation GitHub repository URL
+    "github_url": "{{ cookiecutter.github_url }}",
     # Docs branch in the repo; used in links for viewing the source files
-    "repo_default_branch": "main",
+    "repo_default_branch": "{{ cookiecutter.repo_default_branch }}",
     # Docs location in the repo; used in links for viewing the source files
-    "repo_folder": "/docs/",
-    # TODO: To enable or disable the Previous / Next buttons at the bottom of pages
+    "repo_folder": "{{ cookiecutter.repo_folder }}",
+{% if cookiecutter.sequential_nav %}
+    # Previous / Next buttons at the bottom of pages
     # Valid options: none, prev, next, both
-    # "sequential_nav": "",
-    # TODO: To enable listing contributors on individual pages, set to True
-    "display_contributors": False,
+    "sequential_nav": "{{ cookiecutter.sequential_nav }}",
+{% endif %}
+    # Enable listing contributors on individual pages
+    "display_contributors": {{ cookiecutter.display_contributors }},
     # Required for feedback button
     "github_issues": "enabled",
     # Passes the top-level 'author' value to the theme
     "author": author,
     # Documentation license information
     "license": {
-        # TODO: Specify your project's license.
-        # For the name, we recommend using the standard shorthand identifier from
-        # https://spdx.org/licenses
-        "name": "",
-        # TODO: Link directly to your project's license statement.
-        "url": "",
+        "name": "{{ cookiecutter.license_name }}",
+        "url": "{{ cookiecutter.license_url }}",
     },
 }
-
-# TODO: To enable the edit button on pages, uncomment and change the link to a
-# public repository on GitHub or Launchpad. Any of the following link domains
-# are accepted:
-# - https://github.com/example-org/example"
-# - https://launchpad.net/example
-# - https://git.launchpad.net/example
-#
-# html_theme_options = {
-# 'source_edit_link': 'https://github.com/canonical/sphinx-stack',
-# }
-
-# Project slug
-# TODO: If your documentation is hosted on https://documentation.ubuntu.com/,
-#       uncomment and set to the RTD slug.
-# slug = ''
-
+{% if cookiecutter.source_edit_link %}
+html_theme_options = {
+    "source_edit_link": "{{ cookiecutter.source_edit_link }}",
+}
+{% endif %}
+{% if cookiecutter.slug %}
+# Project slug (for documentation hosted on https://documentation.ubuntu.com/)
+slug = "{{ cookiecutter.slug }}"
+{% endif %}
 #######################
 # Sitemap configuration: https://sphinx-sitemap.readthedocs.io/
 #######################
@@ -126,8 +101,6 @@ sitemap_url_scheme = "{link}"
 # Include `lastmod` dates in the sitemap:
 sitemap_show_lastmod = True
 
-# TODO: Exclude pages that aren't user-facing from the sitemap (e.g., module pages
-# generated by autodoc).
 # Pages excluded from the sitemap:
 sitemap_excludes = [
     "404/",
@@ -164,15 +137,19 @@ rediraffe_dir_only = True
 
 # This description is included in llms.txt to provide some initial context for your
 # product docs.
-# TODO: Add a description in the form "This is the documentation for <product name>,
-# <first sentence of home page>".
+{% if cookiecutter.llms_txt_description %}
 llms_txt_description = textwrap.dedent(
     """\
-    This is the documentation for the Sphinx Stack, a template repository that helps you
-    set up, build, and publish Sphinx documentation.
+    {{ cookiecutter.llms_txt_description }}
     """
 )
-
+{% else %}
+llms_txt_description = textwrap.dedent(
+    """\
+    This is the documentation for {{ cookiecutter.project_name }}.
+    """
+)
+{% endif %}
 # The base URL for references built by sphinx-markdown-builder.
 if os.environ.get("READTHEDOCS"):
     markdown_http_base = html_baseurl
@@ -193,10 +170,6 @@ linkcheck_ignore = [
 
 # A regex list of URLs where anchors are ignored by 'make linkcheck'
 linkcheck_anchors_ignore_for_url = [r"https://github\.com/.*"]
-
-# How long the link checker will wait for a response for each request
-# TODO: Decrease to improve run time or increase if links frequently time out.
-# linkcheck_timeout = 30
 
 # Give linkcheck multiple tries on failure
 linkcheck_retries = 3
@@ -244,35 +217,14 @@ exclude_patterns = [
     "doc-cheat-sheet*",
     ".venv*",
 ]
-
-# Adds custom CSS files, located remotely or in 'html_static_path'.
-# html_css_files = [
-#     "https://assets.ubuntu.com/v1/d86746ef-cookie_banner.css",
-# ]
-
-# Adds custom JavaScript files, located remotely or in 'html_static_path'.
-# html_js_files = [
-#     "https://assets.ubuntu.com/v1/287a5e8f-bundle.js",
-# ]
-
-# Appends extra markup to the end of every document written in reST
-# rst_epilog = """
-# """
-
-# Feedback button at the top; enabled by default
-# TODO: Disable the button if your project is unsuitable for public feedback.
-# disable_feedback_button = True
-
-# Your manpage URL
-# TODO: To enable manpage links, uncomment and replace {codename} with required
-#       release, preferably an LTS release (e.g. noble). Do *not* substitute
-#       {section} or {page}; these will be replaced by sphinx at build time
-#
-# NOTE: If set, adding ':manpage:' to an .rst file
-#       adds a link to the corresponding man section at the bottom of the page.
-# manpages_url = 'https://manpages.ubuntu.com/manpages/{codename}/en/' + \
-#     'man{section}/{page}.{section}.html'
-
+{% if cookiecutter.disable_feedback_button == "True" %}
+# Feedback button at the top
+disable_feedback_button = True
+{% endif %}
+{% if cookiecutter.manpages_url %}
+# Manpage URL
+manpages_url = "{{ cookiecutter.manpages_url }}"
+{% endif %}
 # Specifies a reST snippet to be prepended to each .rst file
 # This defines a :center: role that centers table cell content.
 # This defines a :h2: role that styles content for use with PDF generation.

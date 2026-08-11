@@ -1,0 +1,29 @@
+{
+  "project_name": "Project",
+  "author": "Canonical Ltd.",
+  "product_page": "",
+  "discourse": "",
+  "mattermost": "",
+  "matrix": "",
+  "github_url": "",
+  "repo_default_branch": "main",
+  "repo_folder": "/docs/",
+  "display_contributors": "False",
+  "license_name": "",
+  "license_url": "",
+  "ogp_site_name": "{{ cookiecutter.project_name }}",
+  "ogp_image": "https://assets.ubuntu.com/v1/cc828679-docs_illustration.svg",
+  "html_favicon": "",
+  "product_tag": "",
+  "sequential_nav": "",
+  "source_edit_link": "",
+  "slug": "",
+  "llms_txt_description": "",
+  "manpages_url": "",
+  "disable_feedback_button": "False",
+  "_copy_without_render": [
+    ".github/*",
+    "docs/_templates/*",
+    "docs/release-notes/*"
+  ]
+}
