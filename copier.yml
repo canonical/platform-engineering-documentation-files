@@ -1,0 +1,105 @@
+_subdirectory: template
+_min_copier_version: "9.0"
+
+# ── Core identity ──────────────────────────────────────────────
+project:
+  type: str
+  help: Official name of your project or product (e.g., "Ubuntu Server")
+  default: "Project"
+
+author:
+  type: str
+  help: Author name used in the copyright footer
+  default: "Canonical Ltd."
+
+# ── URLs & community ───────────────────────────────────────────
+product_page:
+  type: str
+  help: Product website URL without the 'https://' prefix (e.g., 'ubuntu.com/lxd'). Leave empty if none.
+  default: ""
+
+discourse:
+  type: str
+  help: Your Discourse instance URL. Leave empty if none.
+  default: ""
+
+mattermost:
+  type: str
+  help: Your Mattermost channel URL. Leave empty if none.
+  default: ""
+
+matrix:
+  type: str
+  help: Your Matrix channel URL. Leave empty if none.
+  default: ""
+
+github_url:
+  type: str
+  help: GitHub repository URL for "Edit on GitHub" links and issue reporting. Leave empty if none.
+  default: ""
+
+repo_default_branch:
+  type: str
+  help: Default branch name of your repository
+  default: "main"
+
+repo_folder:
+  type: str
+  help: Path to the docs folder within your repository
+  default: "/docs/"
+
+# ── Branding ───────────────────────────────────────────────────
+ogp_image:
+  type: str
+  help: URL for the social preview (Open Graph) image
+  default: "https://assets.ubuntu.com/v1/cc828679-docs_illustration.svg"
+
+html_favicon:
+  type: str
+  help: Path to a custom favicon (e.g., '_static/favicon.png'). Leave empty to use the default.
+  default: ""
+
+product_tag:
+  type: str
+  help: Path to the product tag image shown in the page header (e.g., '_static/tag.png'). Leave empty to skip.
+  default: ""
+
+# ── License ────────────────────────────────────────────────────
+license_name:
+  type: str
+  help: SPDX license identifier for your project (e.g., 'Apache-2.0', 'GPL-3.0')
+  default: ""
+
+license_url:
+  type: str
+  help: Direct URL to your project's license statement
+  default: ""
+
+# ── Features ───────────────────────────────────────────────────
+display_contributors:
+  type: bool
+  help: Show a list of contributors on each page?
+  default: false
+
+source_edit_link:
+  type: str
+  help: URL for the "Edit on GitHub" link on each page. Leave empty to hide the edit button.
+  default: ""
+
+# ── Read the Docs ──────────────────────────────────────────────
+rtd_slug:
+  type: str
+  help: Read the Docs project slug (only needed if hosted on documentation.ubuntu.com). Leave empty otherwise.
+  default: ""
+
+# ── LLM-friendly description ───────────────────────────────────
+llms_txt_description:
+  type: str
+  help: Short description for llms.txt (e.g., 'Documentation for MyProduct, a tool that...')
+  default: ""
+
+# ── Link checker ───────────────────────────────────────────────
+linkcheck_timeout:
+  type: int
+  help: Seconds to wait for each link check request. Lower = faster, higher = fewer timeouts.
+  default: 30
