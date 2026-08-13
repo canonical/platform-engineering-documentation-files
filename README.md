@@ -61,6 +61,85 @@ git commit -m "Initialize documentation scaffold from platform-engineering-docum
 2. **Customise further** — Edit `docs/conf.py` for any additional Sphinx configuration
    not covered by the Copier questionnaire.
 
+## Onboarding a repository that already has documentation tooling
+
+If your repository already contains unmanaged copies of the documentation
+tooling files (Sphinx config, Makefile, requirements, etc.), follow this
+process to bring them under Copier management.
+
+### Preparation
+
+1. **Audit your existing files** against the [list of generated files](#what-gets-generated).
+   Any file that exists in both your repo and the template will be overwritten.
+
+2. **Extract project-specific values** from your existing `docs/conf.py`.
+   Map each value to the corresponding Copier question (see `copier.yml` for
+   the full list). Pay special attention to:
+   - `project`, `author`, `copyright`
+   - All entries in `html_context` (product page, Discourse, Mattermost,
+     Matrix, GitHub URL, branch, folder, product tag, contributors)
+   - `ogp_image`, `html_favicon`
+   - Any custom Sphinx extensions or configuration not covered by the template
+
+3. **Identify downstream-only customizations** — things in your current
+   `conf.py`, `Makefile`, or `requirements.txt` that are unique to your
+   project and not part of the standard template. You'll re-apply these
+   after generation.
+
+### Onboarding steps
+
+1. **Back up** your existing tooling files:
+
+   ```bash
+   mkdir /tmp/docs-backup
+   cp -r docs/ /tmp/docs-backup/
+   cp .readthedocs.yaml /tmp/docs-backup/ 2>/dev/null || true
+   ```
+
+2. **Remove only the tooling files** that overlap with the template.
+   Do **not** remove your documentation content (`.md`, `.rst`, `_static/`,
+   images, etc.):
+
+   ```bash
+   rm -rf docs/conf.py docs/Makefile docs/requirements.txt \
+          docs/.gitignore docs/_dev docs/_templates \
+          docs/release-notes/template .readthedocs.yaml
+   ```
+
+3. **Run Copier** with your extracted values:
+
+   ```bash
+   copier copy gh:canonical/platform-engineering-documentation-files.git .
+   ```
+
+4. **Re-apply downstream customizations** by comparing the newly generated
+   files against your backup:
+
+   ```bash
+   diff /tmp/docs-backup/conf.py docs/conf.py
+   diff /tmp/docs-backup/Makefile docs/Makefile
+   diff /tmp/docs-backup/requirements.txt docs/requirements.txt
+   ```
+
+   Add back any project-specific extensions, Makefile targets, or extra
+   Python dependencies.
+
+5. **Test the build** and commit:
+
+   ```bash
+   cd docs && make html
+   git add .
+   git commit -m "Onboard documentation tooling to Copier-based management"
+   ```
+
+### After onboarding
+
+- Your `.copier-answers.yml` is now the source of truth for project-specific
+  values. Do not edit it manually.
+- To pull in future template updates, run `copier update` from the repo root.
+- If you need to change a project value (e.g., a new Discourse URL), update
+  `.copier-answers.yml` and re-run `copier update`.
+
 ## Updating an existing downstream repository
 
 When this template repository is updated (new tooling, bug fixes, new Sphinx extensions),
