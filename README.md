@@ -78,10 +78,8 @@ Enable the included `.github/workflows/cruft-update.yml` workflow in your reposi
 - `docs/_templates/` — Sphinx HTML header/footer templates
 - `docs/Makefile` — Build orchestration (install, html, spelling, vale, etc.)
 - `docs/requirements.txt` — Pinned Python dependencies
-- `docs/contribute/index.rst` — Contribution guide placeholder
 - `docs/release-notes/template/` — Release notes YAML schemas and Jinja2 template
 - `.readthedocs.yaml` — Read the Docs build configuration
-- `.github/workflows/` — CI workflows (triggers commented out by default)
 
 ### Files templatized (customized per repo)
 
@@ -94,7 +92,7 @@ If downstream repos have customized certain files and want to prevent cruft from
 ```json
 {
     "skip": [
-        "docs/contribute/index.rst"
+        "docs/_templates/header.html_"
     ]
 }
 ```
