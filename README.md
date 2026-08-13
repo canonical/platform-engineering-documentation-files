@@ -67,6 +67,11 @@ If your repository already contains unmanaged copies of the documentation
 tooling files (Sphinx config, Makefile, requirements, etc.), follow this
 process to bring them under Copier management.
 
+> **AI-assisted onboarding**: An AI agent skill is available to guide you
+> through this process automatically. See
+> [`skills/onboard-existing-docs/SKILL.md`](skills/onboard-existing-docs/SKILL.md)
+> for the full agent workflow.
+
 ### Preparation
 
 1. **Audit your existing files** against the [list of generated files](#what-gets-generated).
@@ -183,6 +188,8 @@ To make changes to the template itself:
 ├── copier.yml                          # Questions and Copier settings
 ├── {{ _copier_conf.answers_file }}.jinja  # Answers file template
 ├── README.md                           # This file
+├── skills/                             # AI agent skills for onboarding workflows
+│   └── onboard-existing-docs/          # Skill for onboarding pre-existing doc repos
 └── template/                           # _subdirectory: template
     ├── .readthedocs.yaml
     ├── docs/
