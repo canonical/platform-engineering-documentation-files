@@ -12,11 +12,9 @@ documentation tooling from this single source of truth.
 | Area | Files | Type |
 |------|-------|------|
 | Sphinx configuration | `docs/conf.py` | Templated per project |
-| Contribution guide | `docs/contribute/index.rst` | Templated per project |
 | Build tooling | `docs/Makefile`, `docs/requirements.txt` | Static |
 | Developer tooling | `docs/_dev/` (vale, pa11y, pre-commit, pymarkdown, sphinx-stack updater) | Static |
 | HTML templates | `docs/_templates/` (header, footer) | Static |
-| CI workflows | `.github/workflows/` (doc checks, CLA, linting, link checking, build) | Static |
 | Read the Docs config | `.readthedocs.yaml` | Static |
 | Release note templates | `docs/release-notes/template/` | Static |
 
@@ -49,24 +47,18 @@ git commit -m "Initialize documentation scaffold from platform-engineering-docum
 ### What gets generated
 
 - **`docs/conf.py`** — Sphinx configuration with your project's values filled in
-- **`docs/contribute/index.rst`** — Contribution page with your project name
 - **`docs/Makefile`**, **`docs/requirements.txt`**, **`docs/.gitignore`** — Build tooling
 - **`docs/_dev/`** — Developer tooling (vale, pa11y, pre-commit, etc.)
 - **`docs/_templates/`** — HTML header and footer templates
 - **`docs/release-notes/template/`** — Release note artifact templates
-- **`.github/workflows/`** — CI workflows (triggers are commented out; enable when ready)
 - **`.readthedocs.yaml`** — Read the Docs build configuration
 - **`.copier-answers.yml`** — Records your answers for future updates (do not edit manually)
 
 ### Post-setup steps
 
-1. **Enable CI workflows** — Uncomment the `push` and `pull_request` triggers in the
-   workflow files under `.github/workflows/` when you're ready to run them automatically.
-2. **Fill in the contribution guide** — Edit `docs/contribute/index.rst` with your
-   project's actual contribution guidelines.
-3. **Set up Read the Docs** — If you're using Read the Docs, configure your project
+1. **Set up Read the Docs** — If you're using Read the Docs, configure your project
    there to build from your repository.
-4. **Customise further** — Edit `docs/conf.py` for any additional Sphinx configuration
+2. **Customise further** — Edit `docs/conf.py` for any additional Sphinx configuration
    not covered by the Copier questionnaire.
 
 ## Updating an existing downstream repository
@@ -114,7 +106,6 @@ To make changes to the template itself:
 ├── README.md                           # This file
 └── template/                           # _subdirectory: template
     ├── .readthedocs.yaml
-    ├── .github/workflows/
     ├── docs/
     │   ├── conf.py.jinja               # Templated Sphinx config
     │   ├── Makefile
@@ -122,8 +113,6 @@ To make changes to the template itself:
     │   ├── .gitignore
     │   ├── _dev/                       # Developer tooling
     │   ├── _templates/                 # HTML templates
-    │   ├── contribute/
-    │   │   └── index.rst.jinja         # Templated contribution page
     │   └── release-notes/template/     # Release note artifacts
     └── {{ _copier_conf.answers_file }}.jinja
 ```
