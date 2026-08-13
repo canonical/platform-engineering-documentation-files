@@ -25,6 +25,25 @@ cruft link https://github.com/canonical/platform-engineering-documentation-files
 
 Specify the commit hash that matches your current version of the files (or accept the latest).
 
+### Assess an existing repository before linking
+
+If your repository already contains un-templated versions of these files, you can preview what will change before running `cruft link` using the triage script:
+
+```bash
+python skills/onboard-existing-docs/assets/triage_onboarding.py --repo-path /path/to/your/repo
+```
+
+The script produces a JSON report classifying each file as:
+- **`identical`** — matches the template, no action needed
+- **`minor_diff`** — small differences (≤ 5 lines), likely version bumps
+- **`major_diff`** — significant differences, likely customizations to review
+- **`missing`** — file doesn't exist downstream, will be created
+- **`templated_needs_manual`** — `docs/conf.py` requires manual variable mapping
+
+Use this report to gauge the effort required before linking. For a guided,
+step-by-step onboarding process that uses this script, see the
+[`onboard-existing-docs` skill](skills/onboard-existing-docs/SKILL.md).
+
 ### Update from the template
 
 When this template is updated, pull the changes into your downstream repository:
