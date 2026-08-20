@@ -73,7 +73,7 @@ html_context = {
     # Valid options: none, prev, next, both
     # "sequential_nav": "",
     # TODO: To enable listing contributors on individual pages, set to True
-    "display_contributors": {{ display_contributors|lower }},
+    "display_contributors": {{ display_contributors }},
     # Required for feedback button
     "github_issues": "enabled",
     # Passes the top-level 'author' value to the theme
@@ -177,3 +177,39 @@ linkcheck_anchors_ignore_for_url = [r"https://github\.com/.*"]
 
 # How long the link checker will wait for a response for each request
 linkcheck_timeout = {{ linkcheck_timeout }}
+
+
+########################
+# Configuration extras #
+########################
+
+# Custom Sphinx extensions beyond what the template provides.
+# Re-add any project-specific extensions here during onboarding (Phase 6).
+# extensions = [
+#     "sphinx.ext.intersphinx",
+# ]
+
+# Patterns to exclude from the build.
+# exclude_patterns = [
+#     "release-notes/index.rst",
+# ]
+
+# Custom CSS files to include.
+# html_css_files = [
+#     "custom.css",
+# ]
+
+# Custom JavaScript files to include.
+# html_js_files = [
+#     "custom.js",
+# ]
+
+# A string of reStructuredText included at the beginning of every source file.
+# rst_prolog = """
+# .. |charm| replace:: MyCharm
+# """
+
+# Intersphinx mappings for cross-referencing external documentation.
+# intersphinx_mapping = {
+#     "juju": ("https://canonical-juju.readthedocs-hosted.com/en/latest/", None),
+# }
