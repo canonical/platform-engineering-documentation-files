@@ -24,13 +24,69 @@ diff /tmp/docs-backup/.gitignore docs/.gitignore
 
 ### Step 2: Re-apply `conf.py` customizations
 
-Using the `template_uncovered_values` from Phase 2, re-add any:
-- Custom Sphinx extensions to the `extensions` list
-- Extra `html_context` entries
-- Custom `html_theme_options`
-- Any other bespoke configuration that was in the original
+The generated `conf.py` has a `######################## Configuration extras ########################`
+section at the end with commented-out scaffolds for common customizations.
+**This section is added from scratch** — the generated file has no `extensions`
+list, `intersphinx_mapping`, `rst_prolog`, etc. by default.
 
-**Important**: Do not overwrite Copier-managed values. Only add entries that are NOT covered by the template's Copier variables.
+Using the `template_uncovered_values` from Phase 2, uncomment and fill in the
+relevant sections. Add any additional config that doesn't fit the scaffolds.
+
+**Do not overwrite Copier-managed values.** Only add entries that are NOT
+covered by the template's Copier variables.
+
+#### What to re-apply
+
+| Original `conf.py` entry | Where to add it in generated `conf.py` |
+|---|---|
+| `extensions = [...]` | Uncomment `extensions` in the Configuration extras section |
+| `intersphinx_mapping = {...}` | Uncomment `intersphinx_mapping` in the Configuration extras section |
+| `rst_prolog = "..."` | Uncomment `rst_prolog` in the Configuration extras section |
+| `exclude_patterns = [...]` | Uncomment `exclude_patterns` in the Configuration extras section |
+| `html_css_files = [...]` | Uncomment `html_css_files` in the Configuration extras section |
+| `html_js_files = [...]` | Uncomment `html_js_files` in the Configuration extras section |
+| Extra `html_context` keys | Add to the `html_context` dict (after the license block) |
+| Custom `html_theme_options` | Merge into the existing `html_theme_options` dict (or add if absent) |
+
+#### Concrete example: typical Juju charm project
+
+Here is what the Configuration extras section looks like after re-applying
+customizations for a typical Juju charm documentation project:
+
+```python
+########################
+# Configuration extras #
+########################
+
+# Custom Sphinx extensions beyond what the template provides.
+extensions = [
+    "sphinx.ext.intersphinx",
+]
+
+# Patterns to exclude from the build.
+exclude_patterns = [
+    "release-notes/index.rst",
+]
+
+# A string of reStructuredText included at the beginning of every source file.
+rst_prolog = """
+.. |charm| replace:: MyCharm
+"""
+
+# Intersphinx mappings for cross-referencing external documentation.
+intersphinx_mapping = {
+    "juju": ("https://canonical-juju.readthedocs-hosted.com/en/latest/", None),
+}
+```
+
+**Important — values the template intentionally replaces:**
+
+- **`ogp_site_url` / `html_baseurl`**: Do **not** re-apply hardcoded URLs.
+  The template uses `os.environ.get("READTHEDOCS_CANONICAL_URL", "/")` which
+  is the intended pattern.
+- **`version` variable**: The template removes this. Only re-add it if the
+  downstream project uses `version` for purposes beyond `ogp_site_url` /
+  `html_baseurl`.
 
 ### Step 3: Re-apply `Makefile` customizations
 

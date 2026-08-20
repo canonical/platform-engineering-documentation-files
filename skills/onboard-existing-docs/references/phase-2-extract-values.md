@@ -19,7 +19,12 @@ Run the automated extraction script to parse the downstream `docs/conf.py`:
 python3 skills/onboard-existing-docs/assets/extract_conf_values.py docs/conf.py
 ```
 
-This outputs a JSON object mapping each Copier variable to its extracted value. If the script cannot be run (e.g., the downstream repo doesn't have Python available), proceed with manual extraction in Step 2.
+This outputs a JSON object with two keys:
+
+- `copier_values` — Copier variable → extracted value (for `extracted_values`)
+- `template_uncovered` — config NOT covered by the template (for `template_uncovered_values`)
+
+If the script cannot be run (e.g., the downstream repo doesn't have Python available), proceed with manual extraction in Step 2.
 
 ### Step 2: Manual extraction (fallback)
 
@@ -44,13 +49,25 @@ If the script is unavailable, manually read `docs/conf.py` and extract each valu
 
 ### Step 3: Identify values NOT covered by the template
 
-Note any values in `conf.py` that are NOT covered by the template's Copier variables:
+The extraction script's `template_uncovered` output already captures most non-Copier config. Review it and supplement with manual inspection for any additional values.
+
+Common non-Copier config to look for:
 - Custom Sphinx `extensions = [...]` entries beyond what the template provides
-- Extra `html_context` keys
+- `intersphinx_mapping` for cross-referencing external docs
+- `rst_prolog` with custom substitutions (e.g., `|charm|`)
+- `exclude_patterns`, `html_css_files`, `html_js_files`
+- `html_static_path`, `templates_path`
+- `linkcheck_retries`, `linkcheck_timeout`
+- `sitemap_filename`
+- Extra `html_context` keys not covered by Copier variables
 - Custom `html_theme_options`
-- Any other bespoke configuration
 
 These will be re-applied in Phase 6.
+
+**Important — values the template intentionally replaces:**
+
+- **`ogp_site_url` / `html_baseurl`**: The template replaces hardcoded URLs with `os.environ.get("READTHEDOCS_CANONICAL_URL", "/")`. Do **not** preserve the original hardcoded values — the template's environment-variable-based lookup is the intended pattern.
+- **`version` variable**: The template removes the `version = f"{os.environ.get('READTHEDOCS_VERSION', 'local')}"` pattern. If the downstream project uses `version` for purposes beyond `ogp_site_url`/`html_baseurl`, flag it as a customization to re-apply.
 
 ### Step 4: Extract RTD slug (if applicable)
 

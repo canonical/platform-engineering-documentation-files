@@ -32,10 +32,10 @@ Answer each prompt with the values from `extracted_values` (confirmed in Phase 2
 
 ### Step 3: Run Copier non-interactively (alternative)
 
-Construct the command using `--data` flags for each confirmed value:
+Construct the command using `--data` flags for each confirmed value. Use `--defaults` to skip prompts for unspecified values and `--overwrite` to allow Copier to write into the existing `docs/` directory (which still contains content files):
 
 ```bash
-copier copy \
+copier copy --defaults --overwrite \
   --data "project=MyProject" \
   --data "author=Canonical Ltd." \
   --data "product_page=charmhub.io/my-charm" \
@@ -43,7 +43,7 @@ copier copy \
   --data "github_url=https://github.com/canonical/my-repo" \
   --data "repo_default_branch=main" \
   --data "repo_folder=/docs/" \
-  --data "display_contributors=false" \
+  --data "display_contributors=False" \
   ... \
   gh:canonical/platform-engineering-documentation-files.git .
 ```
