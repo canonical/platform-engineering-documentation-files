@@ -118,6 +118,8 @@ html_baseurl = os.environ.get("READTHEDOCS_CANONICAL_URL", "/")
 # sphinx-sitemap uses html_baseurl to generate the full URL for each page:
 sitemap_url_scheme = "{link}"
 
+sitemap_filename = "doc-sitemap.xml"
+
 # Include `lastmod` dates in the sitemap:
 sitemap_show_lastmod = True
 
@@ -134,8 +136,8 @@ sitemap_excludes = [
 # Template and asset locations #
 ################################
 
-# html_static_path = ["_static"]
-# templates_path = ["_templates"]
+html_static_path = ["_static"]
+templates_path = ["_templates"]
 
 #############
 # Redirects #
@@ -188,6 +190,9 @@ linkcheck_anchors_ignore_for_url = [r"https://github\.com/.*"]
 
 # How long the link checker will wait for a response for each request
 linkcheck_timeout = {{ linkcheck_timeout }}
+
+# Give linkcheck multiple tries on failure
+linkcheck_retries = 3
 
 
 ########################
