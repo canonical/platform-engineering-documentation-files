@@ -128,7 +128,7 @@ touch "$TMPDIR/docs/_static/tag.png"
 touch "$TMPDIR/docs/redirects.txt"
 git -C "$TMPDIR" init --quiet
 git -C "$TMPDIR" add --all
-git -C "$TMPDIR" commit --quiet -m "Test content"
+git -C "$TMPDIR" -c user.name="Test Build" -c user.email="test-build@example.invalid" commit --quiet -m "Test content"
 echo "  ✓ Created placeholder assets and git repo"
 
 echo ""
