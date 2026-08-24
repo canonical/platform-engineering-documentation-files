@@ -176,9 +176,10 @@ To make changes to the template itself:
    - Files ending in `.jinja` are Jinja2 templates that use variables from `copier.yml`.
    - Files without `.jinja` are copied as-is.
 2. If you add new variables, update `copier.yml` with the corresponding questions.
-3. Test your changes by generating a project locally:
+3. Test your changes using the integration test:
    ```bash
-   copier copy . /tmp/test-output
+   # Run both scenarios
+   bash tests/test_build.sh full && bash tests/test_build.sh minimal
    ```
 4. Submit a pull request.
 
@@ -202,3 +203,29 @@ To make changes to the template itself:
     │   └── release-notes/template/     # Release note artifacts
     └── {{ _copier_conf.answers_file }}.jinja
 ```
+
+## Testing
+
+The repository includes an integration test that validates the template generates a
+working Sphinx documentation project. It runs `copier copy` with two answer scenarios
+and builds the output with `make html`, which is configured to fail on any warning.
+
+### Running locally
+
+```bash
+# Full scenario (all fields populated) — default
+bash tests/test_build.sh
+
+# Or explicitly:
+bash tests/test_build.sh full
+
+# Minimal scenario (only required fields)
+bash tests/test_build.sh minimal
+```
+
+**Requirements**: Python 3.10+, Git 2.27+, and Copier (`pipx install copier`).
+
+### CI
+
+A GitHub Actions workflow (`.github/workflows/test.yml`) runs both scenarios on every
+push and pull request to `main`.
