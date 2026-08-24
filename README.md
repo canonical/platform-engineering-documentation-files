@@ -223,7 +223,7 @@ bash tests/test_build.sh full
 bash tests/test_build.sh minimal
 ```
 
-**Requirements**: Python 3.10+, Git 2.27+, and Copier (`pipx install copier`).
+**Requirements**: Python 3.10+ with the `venv` module, Git 2.27+, GNU Make, and Copier (`pipx install copier`).
 
 ### CI
 
