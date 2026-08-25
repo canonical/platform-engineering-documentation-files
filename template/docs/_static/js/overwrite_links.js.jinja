@@ -1,6 +1,6 @@
 // Replace oldDomain with newDomain
-const oldDomain = 'canonical-discourse-k8s-charm.readthedocs-hosted.com';
-const newDomain = 'canonical.com/juju/docs/discourse-k8s-charm';
+const oldDomain = '{{ old_domain }}';
+const newDomain = '{{ new_domain }}';
 
 function escapeRegExp(value) {
     return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

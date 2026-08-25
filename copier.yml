@@ -92,6 +92,16 @@ rtd_slug:
   help: Read the Docs project slug (only needed if hosted on documentation.ubuntu.com). Leave empty otherwise.
   default: ""
 
+old_domain:
+  type: str
+  help: Old Read the Docs domain to redirect from (e.g., 'canonical-discourse-k8s-charm.readthedocs-hosted.com'). Leave empty to skip link rewriting.
+  default: ""
+
+new_domain:
+  type: str
+  help: New canonical.com path to redirect to (e.g., 'canonical.com/juju/docs/discourse-k8s-charm'). Leave empty to skip link rewriting.
+  default: ""
+
 # ── LLM-friendly description ───────────────────────────────────
 llms_txt_description:
   type: str
