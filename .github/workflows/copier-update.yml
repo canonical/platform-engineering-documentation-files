@@ -1,0 +1,45 @@
+name: Callable - Copier Update
+
+on:
+  workflow_call:
+    secrets:
+      github_token:
+        required: true
+        description: "GITHUB_TOKEN with contents:write and pull-requests:write permissions"
+
+permissions: {}
+
+jobs:
+  update:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      - name: Install Copier
+        run: pipx install copier
+
+      - name: Run Copier update
+        run: copier update --defaults --conflict inline
+
+      - name: Create pull request
+        uses: canonical/create-pull-request@main
+        with:
+          github-token: ${{ secrets.github_token }}
+          branch-name: chore/copier-update
+          commit-message: "chore: apply Copier template updates"
+          title: "chore: apply Copier template updates"
+          body: |
+            Automated update from [platform-engineering-documentation-files](https://github.com/canonical/platform-engineering-documentation-files).
+
+            Review the diff for any conflicts (marked with `<<<<<<<` / `>>>>>>>` markers). Resolve conflicts manually if needed.
+          upsert: true
+          ignore-no-changes: true

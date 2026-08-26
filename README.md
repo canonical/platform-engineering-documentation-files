@@ -168,6 +168,55 @@ values from `.copier-answers.yml`. Review the diff, resolve any conflicts, and c
 - Any files you've modified locally that conflict with template changes (Copier will
   show conflicts for you to resolve)
 
+## Automated updates with GitHub Actions
+
+Downstream repositories can set up automated Copier updates using the callable
+workflow provided by this template. The workflow checks for template updates,
+runs `copier update`, and opens a pull request with the changes.
+
+### Setup
+
+Add a workflow file to your downstream repository (e.g.,
+`.github/workflows/sync-docs-template.yml`):
+
+```yaml
+name: Sync Docs Template
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Every Monday at 6 AM UTC
+  workflow_dispatch: # Manual trigger
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    uses: canonical/platform-engineering-documentation-files/.github/workflows/copier-update.yml@main
+    secrets:
+      github_token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### What it does
+
+1. Checks out your repository.
+2. Runs `copier update --defaults --conflict inline` to pull in template changes non-interactively.
+3. Opens a pull request with the changes using `canonical/create-pull-request`.
+
+### Conflict handling
+
+Conflicts are rendered as inline Git merge markers (`<<<<<<<` / `>>>>>>>`) in the
+pull request diff. Review the PR and resolve conflicts manually before merging.
+
+If a previous update PR was closed without merging, the next run force-updates the
+same branch. If the template hasn't changed since the last update, no PR is created.
+
+### Schedule
+
+The schedule is controlled by the downstream repository (the `cron` value in the
+workflow file). Each downstream repo can choose its own cadence.
+
 ## Contributing to this template
 
 To make changes to the template itself:
