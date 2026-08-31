@@ -3,7 +3,7 @@ name: Callable Copier update workflow
 on:
   workflow_call:
     secrets:
-      github_token:
+      token:
         required: true
         description: "GITHUB_TOKEN with contents:write and pull-requests:write permissions"
 
@@ -33,7 +33,7 @@ jobs:
       - name: Create pull request
         uses: canonical/create-pull-request@main
         with:
-          github-token: ${{ secrets.github_token }}
+          github-token: ${{ secrets.token }}
           branch-name: chore/platform-engineering-documentation-files-update
           commit-message: "chore(docs): apply copier updates"
           title: "chore(docs): apply template updates from canonical/platform-engineering-documentation-files"
