@@ -1,0 +1,177 @@
+name: Sync from sphinx-stack
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # Daily at 6 AM UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Get latest sphinx-stack release
+        id: release
+        run: |
+          TAG=$(curl -sS https://api.github.com/repos/canonical/sphinx-stack/releases/latest | jq -r .tag_name)
+          if [ -z "$TAG" ] || [ "$TAG" = "null" ]; then
+            echo "Failed to fetch latest release tag"
+            exit 1
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Check if update needed
+        id: check
+        run: |
+          VERSION_FILE="template/.sphinx-stack-version"
+          LATEST="${{ steps.release.outputs.tag }}"
+
+          if [ ! -f "$VERSION_FILE" ]; then
+            mkdir -p "$(dirname "$VERSION_FILE")"
+            echo "$LATEST" > "$VERSION_FILE"
+            echo "Initialized version tracking to $LATEST. No sync needed."
+            echo "sync=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          CURRENT=$(cat "$VERSION_FILE")
+          if [ "$CURRENT" = "$LATEST" ]; then
+            echo "Already at latest version $LATEST. No sync needed."
+            echo "sync=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "New version available: $LATEST (current: $CURRENT)"
+          echo "sync=true" >> "$GITHUB_OUTPUT"
+
+      - name: Configure Git
+        if: steps.check.outputs.sync == 'true'
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Download verbatim sync files
+        if: steps.check.outputs.sync == 'true'
+        run: |
+          TAG="${{ steps.release.outputs.tag }}"
+          RAW="https://raw.githubusercontent.com/canonical/sphinx-stack/$TAG"
+
+          echo "Downloading _dev/ files..."
+          for f in get_vale_conf.py update_sp.py pa11y.json .pymarkdown.json version .pre-commit-config.yaml; do
+            echo "  $RAW/docs/_dev/$f"
+            curl -sSfL "$RAW/docs/_dev/$f" -o "template/docs/_dev/$f"
+          done
+
+          echo "Downloading Makefile..."
+          curl -sSfL "$RAW/docs/Makefile" -o "template/docs/Makefile"
+
+          echo "Downloading .readthedocs.yaml..."
+          curl -sSfL "$RAW/.readthedocs.yaml" -o "template/.readthedocs.yaml"
+
+          echo "Downloading _templates/ files..."
+          curl -sSfL "$RAW/docs/_templates/header.html" -o "template/docs/_templates/header.html"
+          curl -sSfL "$RAW/docs/_templates/footer.html" -o "template/docs/_templates/footer.html"
+
+          echo "Verbatim sync complete."
+
+      - name: Smart merge requirements.txt
+        if: steps.check.outputs.sync == 'true'
+        run: |
+          TAG="${{ steps.release.outputs.tag }}"
+          RAW="https://raw.githubusercontent.com/canonical/sphinx-stack/$TAG"
+          curl -sSfL "$RAW/docs/requirements.txt" -o /tmp/upstream-requirements.txt
+
+          python3 - "$TAG" << 'PYEOF'
+          import sys
+          from pathlib import Path
+
+          tag = sys.argv[1]
+          local = Path("template/docs/requirements.txt")
+          upstream = Path("/tmp/upstream-requirements.txt")
+
+          local_lines = set(local.read_text().splitlines())
+          upstream_lines = set(upstream.read_text().splitlines())
+
+          # Remove empty lines from comparison
+          local_lines.discard("")
+          upstream_lines.discard("")
+
+          new_deps = upstream_lines - local_lines
+
+          if new_deps:
+              print(f"Found {len(new_deps)} new dependencies to add:")
+              for dep in sorted(new_deps):
+                  print(f"  {dep}")
+
+              with open(local, "a") as f:
+                  f.write(f"\n# Added from sphinx-stack {tag}\n")
+                  for dep in sorted(new_deps):
+                      f.write(f"{dep}\n")
+              print("Appended new dependencies to requirements.txt")
+          else:
+              print("No new dependencies found")
+          PYEOF
+
+      - name: Check for new files in upstream _dev/
+        if: steps.check.outputs.sync == 'true'
+        run: |
+          TAG="${{ steps.release.outputs.tag }}"
+          echo "Checking for new files in upstream docs/_dev/ at $TAG..."
+
+          UPSTREAM_FILES=$(curl -sS "https://api.github.com/repos/canonical/sphinx-stack/contents/docs/_dev?ref=$TAG" | jq -r '.[].name')
+
+          if [ -z "$UPSTREAM_FILES" ]; then
+            echo "Failed to list upstream files or directory is empty"
+            exit 1
+          fi
+
+          NEW_COUNT=0
+          for f in $UPSTREAM_FILES; do
+            if [ ! -f "template/docs/_dev/$f" ]; then
+              echo "  New file: $f"
+              curl -sSfL "https://raw.githubusercontent.com/canonical/sphinx-stack/$TAG/docs/_dev/$f" -o "template/docs/_dev/$f"
+              NEW_COUNT=$((NEW_COUNT + 1))
+            fi
+          done
+
+          if [ "$NEW_COUNT" -eq 0 ]; then
+            echo "No new files found."
+          else
+            echo "Downloaded $NEW_COUNT new file(s)."
+          fi
+
+      - name: Update version tracking
+        if: steps.check.outputs.sync == 'true'
+        run: |
+          echo "${{ steps.release.outputs.tag }}" > template/.sphinx-stack-version
+
+      - name: Create pull request
+        if: steps.check.outputs.sync == 'true'
+        uses: canonical/create-pull-request@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          branch-name: chore/sync-sphinx-stack-${{ steps.release.outputs.tag }}
+          commit-message: "chore: sync template files from sphinx-stack ${{ steps.release.outputs.tag }}"
+          title: "chore(deps): sync template files from sphinx-stack ${{ steps.release.outputs.tag }}"
+          body: |
+            Automated sync from [canonical/sphinx-stack](https://github.com/canonical/sphinx-stack) ${{ steps.release.outputs.tag }}.
+
+            **Files synced verbatim:**
+            - `docs/_dev/` (all .py, .json, .yaml, `version`)
+            - `docs/Makefile`
+            - `.readthedocs.yaml`
+            - `docs/_templates/` (header.html, footer.html)
+
+            **Smart merge:**
+            - `docs/requirements.txt` — new dependencies from upstream appended
+
+            > ⚠️ If new Sphinx extensions were added to `requirements.txt`, verify whether `conf.py.jinja`'s `extensions` list needs updating.
+
+            Review the diff carefully. Files not listed above (e.g., `conf.py.jinja`, `_static/`) are intentionally excluded from automated sync.
+          upsert: true
+          ignore-no-changes: true

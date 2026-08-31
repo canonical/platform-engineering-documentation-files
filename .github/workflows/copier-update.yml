@@ -1,4 +1,4 @@
-name: Callable update workflow
+name: Callable Copier update workflow
 
 on:
   workflow_call:
