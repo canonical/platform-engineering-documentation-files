@@ -35,7 +35,7 @@ jobs:
         with:
           github-token: ${{ secrets.github_token }}
           branch-name: chore/platform-engineering-documentation-files-update
-          commit-message: "chore: apply copier updates"
+          commit-message: "chore(docs): apply copier updates"
           title: "chore(docs): apply template updates from canonical/platform-engineering-documentation-files"
           body: |
             Automated update from [platform-engineering-documentation-files](https://github.com/canonical/platform-engineering-documentation-files).

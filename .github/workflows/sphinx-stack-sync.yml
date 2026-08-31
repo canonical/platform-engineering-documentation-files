@@ -2,7 +2,7 @@ name: Sync from sphinx-stack
 
 on:
   schedule:
-    - cron: "0 6 * * *" # Daily at 6 AM UTC
+    - cron: "0 6 * * 6" # Weekly on Saturday at 6 AM UTC
   workflow_dispatch:
 
 permissions:
@@ -173,5 +173,6 @@ jobs:
             > ⚠️ If new Sphinx extensions were added to `requirements.txt`, verify whether `conf.py.jinja`'s `extensions` list needs updating.
 
             Review the diff carefully. Files not listed above (e.g., `conf.py.jinja`, `_static/`) are intentionally excluded from automated sync.
+            Please check upstream if any changes are needed for the excluded files.
           upsert: true
           ignore-no-changes: true
