@@ -180,7 +180,7 @@ Add a workflow file to your downstream repository (e.g.,
 `.github/workflows/sync-docs-template.yml`):
 
 ```yaml
-name: Sync Docs Template
+name: Sync with platform-engineering-documentation-files
 
 on:
   schedule:
@@ -195,7 +195,7 @@ jobs:
   sync:
     uses: canonical/platform-engineering-documentation-files/.github/workflows/copier-update.yml@main
     secrets:
-      github_token: ${{ secrets.GITHUB_TOKEN }}
+      token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ### What it does
