@@ -7,8 +7,8 @@ non-Copier config values (extensions, intersphinx_mapping, etc.) that
 need to be re-applied during onboarding.
 
 Usage:
-    python3 extract_conf_values.py docs/conf.py
-    python3 extract_conf_values.py /path/to/downstream/docs/conf.py
+    python3 scripts/extract_conf_values.py docs/conf.py
+    python3 scripts/extract_conf_values.py /path/to/downstream/docs/conf.py
 
 Output: JSON object with two keys:
     "copier_values"       — Copier variable → extracted value
@@ -19,6 +19,9 @@ import ast
 import json
 import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _conf_ast import extract_any_value, literal_value  # noqa: E402
 
 
 def extract_conf_values(conf_path: str) -> dict:
@@ -82,13 +85,13 @@ def extract_conf_values(conf_path: str) -> dict:
         if isinstance(node, ast.Assign):
             for target in node.targets:
                 if isinstance(target, ast.Name) and target.id in top_level_targets:
-                    value = _literal_value(node.value)
+                    value = literal_value(node.value)
                     if value is not None:
                         result[top_level_targets[target.id]] = value
 
                 # Non-Copier top-level assignments
                 if isinstance(target, ast.Name) and target.id in uncovered_targets:
-                    value = _extract_any_value(node.value)
+                    value = extract_any_value(node.value)
                     if value is not None:
                         uncovered[target.id] = value
 
@@ -98,103 +101,13 @@ def extract_conf_values(conf_path: str) -> dict:
                 if isinstance(target, ast.Name) and target.id == "html_context":
                     if isinstance(node.value, ast.Dict):
                         for key, val in zip(node.value.keys, node.value.values):
-                            key_str = _literal_value(key)
+                            key_str = literal_value(key)
                             if key_str in html_context_targets:
-                                value = _literal_value(val)
+                                value = literal_value(val)
                                 if value is not None:
                                     result[html_context_targets[key_str]] = value
 
     return {"copier_values": result, "template_uncovered": uncovered}
-
-
-def _literal_value(node: ast.expr):
-    """Safely extract a literal value from an AST node."""
-    if isinstance(node, ast.Constant):
-        return node.value
-    if isinstance(node, ast.Name) and node.id in ("True", "False"):
-        return node.id == "True"
-    if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub):
-        if isinstance(node.operand, ast.Constant):
-            return -node.operand.value
-    # Joined strings (f-strings) — return as string representation
-    if isinstance(node, ast.JoinedStr):
-        parts = []
-        for val in node.values:
-            if isinstance(val, ast.Constant):
-                parts.append(str(val.value))
-            elif isinstance(val, ast.FormattedValue):
-                parts.append("{...}")
-        return "".join(parts)
-    return None
-
-
-def _extract_any_value(node: ast.expr):
-    """Extract a value from an AST node, handling lists, dicts, and literals.
-
-    Returns a JSON-serializable Python value, or a string placeholder
-    for values that cannot be statically resolved.
-    """
-    # Literals: strings, numbers, booleans, None
-    if isinstance(node, ast.Constant):
-        return node.value
-    if isinstance(node, ast.Name) and node.id in ("True", "False"):
-        return node.id == "True"
-    if isinstance(node, ast.Name) and node.id == "None":
-        return None
-
-    # Lists: [item, item, ...]
-    if isinstance(node, ast.List):
-        return [_extract_any_value(elt) for elt in node.elts]
-
-    # Tuples: (item, item, ...)
-    if isinstance(node, ast.Tuple):
-        return [_extract_any_value(elt) for elt in node.elts]
-
-    # Dicts: {key: value, ...}
-    if isinstance(node, ast.Dict):
-        result = {}
-        for k, v in zip(node.keys, node.values):
-            key = _extract_any_value(k)
-            val = _extract_any_value(v)
-            if key is not None:
-                result[str(key)] = val
-        return result
-
-    # Joined strings (f-strings)
-    if isinstance(node, ast.JoinedStr):
-        parts = []
-        for val in node.values:
-            if isinstance(val, ast.Constant):
-                parts.append(str(val.value))
-            elif isinstance(val, ast.FormattedValue):
-                parts.append("{...}")
-        return "".join(parts)
-
-    # Function calls, attribute lookups, etc. — return a placeholder
-    if isinstance(node, ast.Call):
-        func_name = _get_name(node.func)
-        return f"<call: {func_name}(...)>"
-
-    if isinstance(node, ast.Attribute):
-        return f"<attr: {_get_name(node)}>"
-
-    # Unary minus
-    if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub):
-        if isinstance(node.operand, ast.Constant):
-            return -node.operand.value
-
-    return None
-
-
-def _get_name(node: ast.expr) -> str:
-    """Get a dotted name string from an AST node (e.g., 'sphinx.util.inspect')."""
-    if isinstance(node, ast.Name):
-        return node.id
-    if isinstance(node, ast.Attribute):
-        return f"{_get_name(node.value)}.{node.attr}"
-    if isinstance(node, ast.Call):
-        return _get_name(node.func)
-    return "?"
 
 
 def main():
