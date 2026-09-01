@@ -12,6 +12,10 @@ permissions:
 jobs:
   sync:
     runs-on: ubuntu-22.04
+    outputs:
+      sync: ${{ steps.check.outputs.sync }}
+      old_version: ${{ steps.check.outputs.current }}
+      new_version: ${{ steps.release.outputs.tag }}
     steps:
       - uses: actions/checkout@v7
 
@@ -48,6 +52,7 @@ jobs:
 
           echo "New version available: $LATEST (current: $CURRENT)"
           echo "sync=true" >> "$GITHUB_OUTPUT"
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
 
       - name: Configure Git
         if: steps.check.outputs.sync == 'true'
@@ -176,3 +181,67 @@ jobs:
             Please check upstream if any changes are needed for the excluded files.
           upsert: true
           ignore-no-changes: true
+
+  analyze-conf-py:
+    needs: sync
+    # Only run when a sync actually happened and we have a previous version to
+    # diff against (the very first run initializes tracking with no old version).
+    if: >-
+      needs.sync.outputs.sync == 'true' &&
+      needs.sync.outputs.old_version != '' &&
+      needs.sync.outputs.old_version != needs.sync.outputs.new_version
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      # Check out the branch the sync job just created so edits land on the
+      # existing sync PR rather than a fresh branch.
+      - uses: actions/checkout@v7
+        with:
+          ref: chore/sync-sphinx-stack-${{ needs.sync.outputs.new_version }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      - name: Install analysis dependencies
+        run: pip install PyYAML
+
+      - name: Analyze upstream conf.py changes
+        id: analyze
+        run: |
+          OLD="${{ needs.sync.outputs.old_version }}"
+          NEW="${{ needs.sync.outputs.new_version }}"
+          BASE="https://raw.githubusercontent.com/canonical/sphinx-stack"
+
+          python3 scripts/analyze_conf_diff.py \
+            --old-upstream "$BASE/$OLD/docs/conf.py" \
+            --new-upstream "$BASE/$NEW/docs/conf.py" \
+            --section-map scripts/conf_section_map.json \
+            --divergences scripts/conf_divergences.json \
+            --requirements template/docs/requirements.txt \
+            --copier copier.yml \
+            --old-version "$OLD" \
+            --new-version "$NEW" \
+            --output analysis.json
+
+          echo "--- analysis.json ---"
+          cat analysis.json
+
+      - name: Upload analysis report
+        uses: actions/upload-artifact@v4
+        with:
+          name: conf-py-analysis-${{ needs.sync.outputs.new_version }}
+          path: analysis.json
+
+      # TODO: Invoke the LLM agent with skills/update-conf-py/SKILL.md and
+      # analysis.json to apply changes to template/docs/conf.py.jinja, then
+      # commit to this branch and post the PR summary. The invocation mechanism
+      # (custom action / API call / GitHub Models) is deferred; the skill file
+      # and analysis.json define the contract the agent consumes.
+      - name: Apply conf.py.jinja updates (agent)
+        run: |
+          echo "Agent invocation not yet wired up."
+          echo "analysis.json is available as a workflow artifact and to the agent step."
