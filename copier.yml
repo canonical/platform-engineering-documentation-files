@@ -1,5 +1,7 @@
 _subdirectory: template
 _min_copier_version: "9.0"
+_exclude:
+  - ".sphinx-stack-version"
 
 # ── Core identity ──────────────────────────────────────────────
 project:

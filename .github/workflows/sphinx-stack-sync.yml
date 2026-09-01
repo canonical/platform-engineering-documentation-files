@@ -35,7 +35,7 @@ jobs:
             mkdir -p "$(dirname "$VERSION_FILE")"
             echo "$LATEST" > "$VERSION_FILE"
             echo "Initialized version tracking to $LATEST. No sync needed."
-            echo "sync=false" >> "$GITHUB_OUTPUT"
+            echo "sync=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
