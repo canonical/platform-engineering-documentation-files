@@ -16,7 +16,7 @@ description: "Phase 2 of the onboard-existing-docs skill. Extracts project-speci
 Run the automated extraction script to parse the downstream `docs/conf.py`:
 
 ```bash
-python3 skills/onboard-existing-docs/assets/extract_conf_values.py docs/conf.py
+python3 scripts/extract_conf_values.py docs/conf.py
 ```
 
 This outputs a JSON object with two keys:
