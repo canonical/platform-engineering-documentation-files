@@ -10,6 +10,11 @@ process to set up the documentation scaffold from scratch.
 - Git 2.27+
 - Copier installed: `pipx install copier` or `uv tool install copier`
 
+In addition, you will need to collect information about your project
+to answer questions from Copier during the setup process. See
+the [Copier variables reference](../reference/copier-answers-yml.md)
+for details on each question.
+
 ## Generate the documentation scaffold
 
 From the root of your downstream repository, run:
@@ -19,11 +24,9 @@ copier copy gh:canonical/platform-engineering-documentation-files.git .
 ```
 
 Copier will prompt you with a series of questions about your project (name,
-URLs, license, and so on). Answer them to generate your documentation
-scaffold. See the [Copier variables reference](../reference/copier-answers-yml.md)
-for details on each question.
+URLs, license, and so on). Answer them to generate your documentation scaffold. 
 
-## What gets generated
+After the command completes, your repository should include the following files:
 
 | File | Purpose |
 |---|---|
@@ -37,7 +40,7 @@ for details on each question.
 | `.readthedocs.yaml` | Read the Docs build configuration |
 | `.copier-answers.yml` | Records your answers for future updates |
 
-## Validate and commit
+## Validate
 
 Test that the generated documentation builds correctly:
 
@@ -45,12 +48,7 @@ Test that the generated documentation builds correctly:
 cd docs && make html
 ```
 
-If the build succeeds, commit the generated files:
-
-```bash
-git add .
-git commit -m "Initialize documentation scaffold from platform-engineering-documentation-files"
-```
+If the build succeeds, commit the generated files to your repository.
 
 ## After onboarding
 
@@ -60,8 +58,6 @@ git commit -m "Initialize documentation scaffold from platform-engineering-docum
   See [How to update a downstream repository](update-downstream-repo.md).
 - If you need to change a project value (for example, a new Discourse URL),
   update `.copier-answers.yml` and re-run `copier update`.
-- If you are using Read the Docs, create a project there and configure it to
-  build from your repository.
-
-
+- To avoid duplicate maintenance, disable any other tools from updating files
+  in the `docs` folder (e.g., Renovate).
 
