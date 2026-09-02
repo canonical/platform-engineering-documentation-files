@@ -208,7 +208,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install analysis dependencies
-        run: pip install PyYAML
+        run: pip install pyyaml
 
       - name: Analyze upstream conf.py changes
         id: analyze
