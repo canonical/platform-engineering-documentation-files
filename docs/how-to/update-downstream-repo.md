@@ -3,9 +3,7 @@
 When this template repository is updated (new tooling, bug fixes, new Sphinx
 extensions), downstream repos can pull in the changes.
 
-## Manual update
-
-From the root of your downstream repository:
+Manually update the files from the root of your downstream repository using:
 
 ```bash
 copier update

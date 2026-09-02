@@ -1,10 +1,7 @@
 # How-to guides
 
-Step-by-step instructions for common tasks with the Platform Engineering
-documentation files solution.
+Step-by-step instructions for common tasks with the solution.
 
-| Guide | Use when |
-|---|---|
-| [Onboard an existing repository](onboard-existing-repo.md) | Your repo already has documentation tooling files and you want to bring them under Copier management |
-| [Set up a new RTD project](set-up-new-rtd.md) | You have generated the scaffold and need to configure Read the Docs for your project |
-| [Update a downstream repository](update-downstream-repo.md) | This template has been updated and you want to pull the changes into your downstream repo |
+* [Onboard a new RTD project](onboard-new-repo.md): A guide for onboarding a downstream repository that doesn't contain documentation tooling files.
+* [Onboard an existing repository](onboard-existing-repo.md): A guide for onboarding a repository that already has documentation tooling files.
+* [Update a downstream repository](update-downstream-repo.md): A guide for managing updates between this solution and your downstream repository. 

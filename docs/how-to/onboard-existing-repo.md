@@ -15,7 +15,7 @@ process to bring them under Copier management.
 - Git 2.27+
 - Copier installed: `pipx install copier` or `uv tool install copier`
 
-## Step 1: Audit your existing files
+## Audit your existing files
 
 Compare your repo's files against the [list of generated files](#what-gets-generated).
 Any file that exists in both your repo and the template will be overwritten.
@@ -39,7 +39,7 @@ ls -la .readthedocs.yaml 2>/dev/null || echo "No .readthedocs.yaml found"
 | `.readthedocs.yaml` | `.readthedocs.yaml` |
 | `{{ _copier_conf.answers_file }}.jinja` | `.copier-answers.yml` |
 
-## Step 2: Extract project-specific values
+## Extract project-specific values
 
 Extract values from your existing `docs/conf.py` and map them to the
 corresponding Copier variables. See the [Copier variables reference](../reference/copier-answers-yml.md)
@@ -53,13 +53,13 @@ Pay special attention to:
 - `ogp_image`, `html_favicon`
 - Any custom Sphinx extensions or configuration not covered by the template
 
-## Step 3: Identify downstream-only customizations
+## Identify downstream-only customizations
 
 Find things in your current `conf.py`, `Makefile`, or `requirements.txt` that
 are unique to your project and not part of the standard template. You will
 re-apply these after generation.
 
-## Step 4: Back up and remove overlapping files
+## Back up and remove overlapping files
 
 **Back up** your existing tooling files:
 
@@ -79,7 +79,7 @@ rm -rf docs/conf.py docs/Makefile docs/requirements.txt \
        docs/release-notes/template .readthedocs.yaml
 ```
 
-## Step 5: Run Copier
+## Run Copier
 
 From the root of your downstream repository:
 
@@ -90,7 +90,7 @@ copier copy gh:canonical/platform-engineering-documentation-files.git .
 Copier will prompt you with the questionnaire. Use the values you extracted
 in Step 2.
 
-## Step 6: Re-apply downstream customizations
+## Re-apply downstream customizations
 
 Compare the newly generated files against your backup and re-apply any
 project-specific changes:
@@ -104,7 +104,7 @@ diff /tmp/docs-backup/requirements.txt docs/requirements.txt
 Add back any project-specific extensions, Makefile targets, or extra
 Python dependencies.
 
-## Step 7: Validate and commit
+## Validate and commit
 
 Test the build:
 
