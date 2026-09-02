@@ -7,6 +7,17 @@ on:
     branches: [main]
 
 jobs:
+  lint:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10.0.1
+
+      - name: Run lint
+        run: uvx tox -e lint
+
   test:
     runs-on: ubuntu-22.04
     strategy:

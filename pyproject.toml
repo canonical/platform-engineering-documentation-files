@@ -1,0 +1,10 @@
+[tool.ruff]
+line-length = 99
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+# Docstring usage example contains long example URLs.
+"scripts/analyze_conf_diff.py" = ["E501"]

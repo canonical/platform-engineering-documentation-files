@@ -58,13 +58,9 @@ def diff_assignments(old: dict, new: dict) -> list:
         in_new = key in new
 
         if not in_old and in_new:
-            changes.append(
-                {"type": "new_assignment", "key": key, "new_value": new[key]}
-            )
+            changes.append({"type": "new_assignment", "key": key, "new_value": new[key]})
         elif in_old and not in_new:
-            changes.append(
-                {"type": "removed_assignment", "key": key, "old_value": old[key]}
-            )
+            changes.append({"type": "removed_assignment", "key": key, "old_value": old[key]})
         elif old[key] != new[key]:
             changes.extend(_diff_value(key, old[key], new[key]))
 
@@ -78,13 +74,9 @@ def _diff_value(key: str, old_val, new_val) -> list:
         removed = [item for item in old_val if item not in new_val]
         result = []
         if added:
-            result.append(
-                {"type": "list_item_added", "key": key, "added": added}
-            )
+            result.append({"type": "list_item_added", "key": key, "added": added})
         if removed:
-            result.append(
-                {"type": "list_item_removed", "key": key, "removed": removed}
-            )
+            result.append({"type": "list_item_removed", "key": key, "removed": removed})
         return result
 
     if isinstance(old_val, dict) and isinstance(new_val, dict):
@@ -177,14 +169,11 @@ def resolve_divergence(change: dict, divergences: dict) -> dict:
     elif rule == "merge_upstream_changes_preserve_custom":
         custom = divergence.get("custom_entries", [])
         if change["type"] == "list_item_removed":
-            change["removed"] = [
-                item for item in change.get("removed", []) if item not in custom
-            ]
+            change["removed"] = [item for item in change.get("removed", []) if item not in custom]
             if not change["removed"]:
                 change["suggested_action"] = "skip"
                 change["note"] = (
-                    f"Only custom entries would be removed from '{key}'; "
-                    f"preserving them."
+                    f"Only custom entries would be removed from '{key}'; preserving them."
                 )
         change.setdefault("preserve_entries", custom)
     elif rule == "keep_active":
@@ -196,8 +185,7 @@ def resolve_divergence(change: dict, divergences: dict) -> dict:
     return change
 
 
-def enrich(change: dict, section_map: dict, requirements_lines: list,
-           copier_data: dict) -> dict:
+def enrich(change: dict, section_map: dict, requirements_lines: list, copier_data: dict) -> dict:
     """Attach jinja_location, ripple_checks, and default confidence."""
     key = change["key"]
     section = section_map.get(key)
@@ -228,8 +216,7 @@ def enrich(change: dict, section_map: dict, requirements_lines: list,
             change["confidence"] = "medium"
 
     # Ripple: copier-mapped value change may need a copier.yml default update.
-    if section and section.get("type") == "copier_variable" and \
-            change["type"] == "value_changed":
+    if section and section.get("type") == "copier_variable" and change["type"] == "value_changed":
         copier_key = section.get("copier_key")
         current_default = _copier_default(copier_data, copier_key)
         mismatch = current_default != change.get("new_value")
@@ -245,8 +232,7 @@ def enrich(change: dict, section_map: dict, requirements_lines: list,
     change.setdefault("confidence", "high" if not change["needs_llm"] else "medium")
     change.setdefault("suggested_action", _default_action(change))
 
-    if change["jinja_location"] is None and \
-            change.get("suggested_action") != "skip":
+    if change["jinja_location"] is None and change.get("suggested_action") != "skip":
         # We don't know where this belongs in the template.
         change["needs_llm"] = True
         change["confidence"] = "low"
@@ -273,10 +259,16 @@ def _default_action(change: dict) -> str:
     return mapping.get(change["type"])
 
 
-def build_report(old_src: str, new_src: str, section_map: dict,
-                 divergences: dict, requirements_lines: list,
-                 copier_data: dict, old_version: str,
-                 new_version: str) -> dict:
+def build_report(
+    old_src: str,
+    new_src: str,
+    section_map: dict,
+    divergences: dict,
+    requirements_lines: list,
+    copier_data: dict,
+    old_version: str,
+    new_version: str,
+) -> dict:
     old_tree = parse(old_src)
     new_tree = parse(new_src)
 
@@ -302,9 +294,7 @@ def build_report(old_src: str, new_src: str, section_map: dict,
         "total_changes": len(changes),
         "actionable": len(resolved),
         "skipped": len(skipped),
-        "auto_applicable": sum(
-            1 for c in resolved if not c.get("needs_llm")
-        ),
+        "auto_applicable": sum(1 for c in resolved if not c.get("needs_llm")),
         "needs_llm_judgment": sum(1 for c in resolved if c.get("needs_llm")),
     }
 

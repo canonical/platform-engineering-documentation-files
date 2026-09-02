@@ -26,7 +26,7 @@ from _conf_ast import extract_any_value, literal_value  # noqa: E402
 
 def extract_conf_values(conf_path: str) -> dict:
     """Parse a Sphinx conf.py and extract values mapped to Copier variables."""
-    with open(conf_path, "r") as f:
+    with open(conf_path) as f:
         source = f.read()
 
     tree = ast.parse(source)
