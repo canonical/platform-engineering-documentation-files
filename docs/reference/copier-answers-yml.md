@@ -1,0 +1,1 @@
+# Variables used by Copier
