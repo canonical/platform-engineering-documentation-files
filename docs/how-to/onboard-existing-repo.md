@@ -1,4 +1,4 @@
-# How to onboard an existing repository
+# How to onboard a repository with existing documentation files
 
 If your repository already contains unmanaged copies of the documentation
 tooling files (Sphinx config, Makefile, requirements, and so on), follow this
