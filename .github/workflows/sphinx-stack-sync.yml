@@ -194,6 +194,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      copilot-requests: write
     steps:
       # Check out the branch the sync job just created so edits land on the
       # existing sync PR rather than a fresh branch.
@@ -236,12 +237,46 @@ jobs:
           name: conf-py-analysis-${{ needs.sync.outputs.new_version }}
           path: analysis.json
 
-      # TODO: Invoke the LLM agent with skills/update-conf-py/SKILL.md and
-      # analysis.json to apply changes to template/docs/conf.py.jinja, then
-      # commit to this branch and post the PR summary. The invocation mechanism
-      # (custom action / API call / GitHub Models) is deferred; the skill file
-      # and analysis.json define the contract the agent consumes.
+      - name: Install Copilot CLI
+        if: steps.analyze.outcome == 'success'
+        run: npm install -g @github/copilot
+
+        # Agent failures never block the sync PR; it already exists with the
+        # verbatim-synced changes and analysis.json is uploaded regardless.
       - name: Apply conf.py.jinja updates (agent)
+        id: agent
+        if: steps.analyze.outcome == 'success'
+        continue-on-error: true
         run: |
-          echo "Agent invocation not yet wired up."
-          echo "analysis.json is available as a workflow artifact and to the agent step."
+          python3 scripts/build_copilot_prompt.py analysis.json > /tmp/prompt.txt
+          copilot -p "$(cat /tmp/prompt.txt)" \
+            --no-ask-user \
+            --model auto \
+            --allow-tool='read,write,shell(git:*),shell(bash:*)'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit and push agent changes
+        if: steps.agent.outcome == 'success'
+        run: |
+          git add -A -- template/ copier.yml scripts/ skills/
+          if git diff --cached --quiet; then
+            echo "Agent made no changes to commit."
+          else
+            git commit -m "chore: apply conf.py.jinja updates from sphinx-stack ${{ needs.sync.outputs.new_version }} analysis"
+            git push
+          fi
+
+      - name: Post analysis summary as PR comment
+        if: always() && steps.analyze.outcome == 'success'
+        run: |
+          SUMMARY_FILE=/tmp/agent-summary.md
+          if [ ! -f "$SUMMARY_FILE" ]; then
+            echo "## \U0001F916 conf.py.jinja analysis for sphinx-stack ${{ needs.sync.outputs.new_version }}" > "$SUMMARY_FILE"
+            echo "" >> "$SUMMARY_FILE"
+            echo "The agent step did not produce a summary (it may have failed — see the workflow run logs). \`analysis.json\` is attached to this run as a workflow artifact for manual follow-up." >> "$SUMMARY_FILE"
+          fi
+          gh pr comment "chore/sync-sphinx-stack-${{ needs.sync.outputs.new_version }}" \
+            --body-file "$SUMMARY_FILE"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
