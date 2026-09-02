@@ -1,7 +1,7 @@
 # How to onboard an existing repository
 
 If your repository already contains unmanaged copies of the documentation
-tooling files (Sphinx config, Makefile, requirements, etc.), follow this
+tooling files (Sphinx config, Makefile, requirements, and so on), follow this
 process to bring them under Copier management.
 
 > **AI-assisted onboarding**: An AI agent skill is available to guide you
@@ -56,7 +56,7 @@ Pay special attention to:
 ## Step 3: Identify downstream-only customizations
 
 Find things in your current `conf.py`, `Makefile`, or `requirements.txt` that
-are unique to your project and not part of the standard template. You'll
+are unique to your project and not part of the standard template. You will
 re-apply these after generation.
 
 ## Step 4: Back up and remove overlapping files
@@ -125,5 +125,5 @@ git commit -m "Onboard documentation tooling to Copier-based management"
   values. Do not edit it manually.
 - To pull in future template updates, run `copier update` from the repo root.
   See [How to update a downstream repository](update-downstream-repo.md).
-- If you need to change a project value (e.g., a new Discourse URL), update
+- If you need to change a project value (for example, a new Discourse URL), update
   `.copier-answers.yml` and re-run `copier update`.

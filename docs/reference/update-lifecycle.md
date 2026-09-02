@@ -77,7 +77,7 @@ Breaking changes are rare and handled deliberately:
    notes or changelog before it takes effect.
 2. **Migration path**: Where possible, a migration script or manual steps are
    provided.
-3. **Communication**: Downstream repo maintainers are notified via the
+3. **Communication**: Downstream repo maintainers are notified through the
    automated update PRs or direct communication.
 
 ## Versioning
@@ -86,6 +86,6 @@ This repository does not use semantic versioning tags. Instead:
 
 - The default branch (`main`) is the single source of truth.
 - Each commit is a potential update for downstream repos.
-- Downstream repos track the template commit they last synced from via
+- Downstream repos track the template commit they last synced from through
   `_commit` in `.copier-answers.yml`.
 - The sphinx-stack version is tracked separately in `template/docs/_dev/version`.

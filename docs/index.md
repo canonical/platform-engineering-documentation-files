@@ -1,14 +1,14 @@
 # Platform Engineering documentation files
 
 This repository is a [Copier](https://copier.readthedocs.io/) template that provides a
-standardised Sphinx documentation scaffold for downstream Platform Engineering
+standardized Sphinx documentation scaffold for downstream Platform Engineering
 repositories. It serves as a single source of truth for documentation tooling —
 downstream repos use Copier to generate and later update their documentation
 infrastructure from this template.
 
 ## Navigating these docs
 
-These docs are organised around the [Diátaxis](https://diataxis.fr/) framework,
+These docs are organized around the [Diátaxis](https://diataxis.fr/) framework,
 which separates documentation by the kind of need it serves.
 
 | Section | Purpose |

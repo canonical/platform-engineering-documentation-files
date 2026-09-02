@@ -9,7 +9,7 @@ with an AI coding agent.
 **Location:** [`skills/onboard-existing-docs/SKILL.md`](../../skills/onboard-existing-docs/SKILL.md)
 
 Onboards a downstream repository that already has unmanaged documentation
-tooling files (Sphinx config, Makefile, requirements, etc.) into the
+tooling files (Sphinx config, Makefile, requirements, and so on) into the
 Copier-based management solution.
 
 ### What it does

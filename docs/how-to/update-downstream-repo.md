@@ -17,7 +17,7 @@ any conflicts, and commit.
 
 ### What Copier updates
 
-- All static files (Makefile, requirements, `_dev/`, `_templates/`, workflows, etc.)
+- All static files (Makefile, requirements, `_dev/`, `_templates/`, workflows, and so on)
 - Templated files are re-rendered with your existing answers
 
 ### What Copier preserves
@@ -86,7 +86,7 @@ If `copier update` reports no changes:
 
 ### Changing project values
 
-If you need to change a project-specific value (e.g., a new Discourse URL):
+If you need to change a project-specific value (for example, a new Discourse URL):
 
 1. Update the value in `.copier-answers.yml`.
 2. Run `copier update` to re-render templated files with the new value.

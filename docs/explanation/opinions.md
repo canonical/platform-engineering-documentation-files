@@ -63,5 +63,5 @@ between projects are templated.
 
 This repository is the single source of truth for documentation tooling across
 Platform Engineering. When a bug is fixed or an improvement is made here,
-downstream repos pull it in via `copier update`. This eliminates the drift that
+downstream repos pull it in through `copier update`. This eliminates the drift that
 occurs when each repo maintains its own copy of the same tooling files.
