@@ -13,6 +13,6 @@ This documentation set uses the [Diátaxis](https://diataxis.fr/) framework
 for organization and structuring.
 
 * [How-to guides](how-to/index.md) provide step-by-step instructions for common tasks.
-* [Reference](reference/index.md) expands on technical details relevant to this repository.
-* [Explanation](explanation/index.md) covers conceptual topics behind the solution and its underlying design decisions.
+* [Reference](reference/index.md) expands on technical details relevant to this solution.
+* [Opinions](explanation/opinions.md) covers some of the underlying design decisions in this solution.
 

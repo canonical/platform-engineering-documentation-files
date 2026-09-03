@@ -1,67 +1,34 @@
 # Opinions in this solution
 
-This page explains the design decisions and trade-offs behind the
-Platform Engineering documentation files solution.
+The development of this solution took place over roughly six months starting from the initial conversations and brainstorming. The ideation phase revealed that the solution would have to include opinions about the design and update workflow to accommodate the needs of the Platform Engineering team documentation sets.
 
 ## Why Copier?
 
-We chose [Copier](https://copier.readthedocs.io/) over alternatives like
-Cookiecutter or manual copy-paste for several reasons:
+While developing this solution, two different tools were considered: Cruft and Copier. 
+We chose [Copier](https://copier.readthedocs.io/) for the following reasons:
 
-- **Bidirectional updates.** Copier's `copier update` command lets downstream
-  repos pull in template changes while preserving their project-specific values.
-  This is the foundation of the central-management model.
-- **Declarative questionnaire.** The `copier.yml` file defines all project-specific
-  variables in one place, with types, defaults, and help text. This makes the
-  template self-documenting.
-- **Jinja2 templating.** Copier uses Jinja2, the same templating engine as Sphinx,
-  so the template syntax is familiar to documentation maintainers.
-- **`.copier-answers.yml` as source of truth.** Copier records every answer in a
-  machine-readable file, making updates reproducible and auditable.
+* **Lower operational complexity**: We discovered that Copier needed fewer caveats and workarounds for the solution.
 
-## Why Sphinx + the Canonical Sphinx stack?
+* **Alignment with goals**: Copier aligned better with the needs of this solution, which requires managing files identical across all downstream repositories alongside customized files.
 
-- **Sphinx** is the standard documentation tool across Canonical. Using it ensures
-  consistency with other projects and access to the Canonical Sphinx theme.
-- **The Canonical Sphinx stack** (`canonical/sphinx-stack`) provides a curated set
-  of Sphinx extensions, a branded theme, and developer tooling (vale, pa11y,
-  pre-commit). This template wraps that stack so downstream repos get it without
-  manual configuration.
+* **More automation-friendly**: Developing the [`onboard-existing-docs` skill](../../skills/onboard-existing-docs/SKILL.md) revealed that Copier better supports a stable and reproducible process. We knew that the solution would need to support onboarding of repositories with existing documentation files, making Copier an ideal candidate.
 
-## What's included — and why
+## Why the Canonical Sphinx Stack?
 
-| Area | Rationale |
-|---|---|
-| `docs/conf.py` (templated) | Every project needs Sphinx config. Templating it lets us fill in project-specific values from the Copier questionnaire. |
-| `docs/Makefile`, `docs/requirements.txt` (static) | Standard build tooling that doesn't vary between projects. |
-| `docs/_dev/` (static) | Developer tooling (vale, pa11y, pre-commit, pymarkdown, sphinx-stack updater) that every PE docs project should use. |
-| `docs/_templates/` (static) | HTML header and footer templates for the Canonical theme. |
-| `.readthedocs.yaml` (static) | Standard RTD build configuration. |
-| `docs/release-notes/template/` (static) | Release note artifact templates for consistent changelog formatting. |
+The target repositories for this solution are ones maintained by the Platform Engineering team at Canonical. We use the [Sphinx Stack](https://documentation.ubuntu.com/sphinx-stack/latest/) as the underlying scaffolding, tooling, and theming for our documentation projects.
 
-## What's deliberately excluded
-
-- **Documentation content** (`.md`, `.rst`, images, `_static/` assets). These are
-  project-specific and not managed by the template.
-- **CI/CD beyond the callable workflow.** Each downstream repo manages its own CI.
-  The template provides a reusable GitHub Actions workflow for automated Copier
-  updates, but doesn't impose a CI structure.
-
-## Template vs. static files
+## File types
 
 Files in the template fall into two categories:
 
-- **Templated files** (`.jinja` suffix) are rendered with project-specific values
-  from `.copier-answers.yml` at generation time. Example: `conf.py.jinja` → `docs/conf.py`.
-- **Static files** are copied as-is. They contain no project-specific values and
-  are identical across all downstream repos. Example: `docs/Makefile`.
-
-This distinction keeps the template maintainable: only files that genuinely vary
-between projects are templated.
+- **Static files** are assumed to be identical across all downstream repositories. They typically contain no project-specific values.
+- **Templated files** (using the `.jinja` suffix) are rendered with project-specific values
+  from `.copier-answers.yml` at generation time.
 
 ## Single source of truth
 
-This repository is the single source of truth for documentation tooling across
-Platform Engineering. When a bug is fixed or an improvement is made here,
-downstream repos pull it in through `copier update`. This eliminates the drift that
-occurs when each repo maintains its own copy of the same tooling files.
+The primary purpose of this solution is to act as a single source of truth for the shared documentation files. This solution handles all additions, modifications, removals, and dependency updates across our entire portfolio. The benefits are immeasurable: 
+
+* Renovate noise is reduced in the downstream repositories. A single pull request from Renovate handles a dependency update in this solution, and a single pull request in the downstream repository handles multiple dependency updates within the update frequency.
+* We maintain consistency in styling and tooling across our repositories, relying on an automated process rather than manual updates. Repositories no longer fall through the cracks.
+* We can introduce common documentation (e.g., contributing guidelines) into all repositories.
