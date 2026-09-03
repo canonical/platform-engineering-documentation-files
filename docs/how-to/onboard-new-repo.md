@@ -1,8 +1,8 @@
 # How to onboard a repository with no documentation files
 
-If your repository does not yet have any documentation tooling files (no
-Sphinx config, Makefile, or Read the Docs configuration), follow this
-process to set up the documentation scaffold from scratch.
+Repositories with no existing `sphinx-stack` files don't need to worry
+about overwriting project-specific customizations and can therefore
+ingest the files in this solution in a straightforward manner.
 
 ## Prerequisites
 
@@ -23,8 +23,7 @@ From the root of your downstream repository, run:
 copier copy gh:canonical/platform-engineering-documentation-files.git .
 ```
 
-Copier will prompt you with a series of questions about your project (name,
-URLs, license, and so on). Answer them to generate your documentation scaffold. 
+Copier will prompt you with a series of questions about your project. Answer them to generate the documentation scaffold. 
 
 After the command completes, your repository should include the following files:
 
@@ -53,11 +52,10 @@ If the build succeeds, commit the generated files to your repository.
 ## After onboarding
 
 - Your `.copier-answers.yml` is now the source of truth for project-specific
-  values. Do not edit it manually.
+  values. If you need to change a project value (for example, a new Discourse URL),
+  update `.copier-answers.yml` and re-run `copier update`.
 - To pull in future template updates, run `copier update` from the repo root.
   See [How to update a downstream repository](update-downstream-repo.md).
-- If you need to change a project value (for example, a new Discourse URL),
-  update `.copier-answers.yml` and re-run `copier update`.
 - To avoid duplicate maintenance, disable any other tools from updating files
   in the `docs` folder (e.g., Renovate).
 
