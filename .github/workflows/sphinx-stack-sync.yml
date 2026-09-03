@@ -252,7 +252,7 @@ jobs:
           copilot -p "$(cat /tmp/prompt.txt)" \
             --no-ask-user \
             --model auto \
-            --allow-tool='read,write,shell(git:*),shell(bash:*)'
+            --allow-tool='read,write,shell(bash tests/test_build.sh:*)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
