@@ -1,6 +1,6 @@
 # How to update a downstream repository
 
-When this repository is updated, downstream repos should pull in the changes
+When this repository is updated, downstream repositories should pull in the changes
 to remain in sync.
 
 ## Perform a manual update
