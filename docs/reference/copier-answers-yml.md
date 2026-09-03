@@ -3,7 +3,7 @@
 The variables defined in `copier.yml` provide the ability to customize
 the files in this solution based on the downstream repository. 
 These variables are prompted during `copier copy` and stored in the downstream
-repo's `.copier-answers.yml`.
+repository's `.copier-answers.yml`.
 
 ## Core identity
 

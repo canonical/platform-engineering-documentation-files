@@ -54,7 +54,7 @@ If the build succeeds, commit the generated files to your repository.
 - Your `.copier-answers.yml` is now the source of truth for project-specific
   values. If you need to change a project value (for example, a new Discourse URL),
   update `.copier-answers.yml` and re-run `copier update`.
-- To pull in future template updates, run `copier update` from the repo root.
+- To pull in future template updates, run `copier update` from the repository root.
   See [How to update a downstream repository](update-downstream-repo.md).
 - To avoid duplicate maintenance, disable any other tools from updating files
   in the `docs` folder (e.g., Renovate).

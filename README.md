@@ -1,10 +1,10 @@
-# Platform Engineering Documentation Files
+# Platform Engineering documentation files
 
 Central management and maintenance solution for common files in Platform Engineering documentation sets.
 
 This repository is a [Copier](https://copier.readthedocs.io/) template that provides a
 standardised Sphinx documentation scaffold for downstream Platform Engineering
-repositories. Downstream repos use Copier to generate and later update their
+repositories. Downstream repositories use Copier to generate and later update their
 documentation tooling from this single source of truth.
 
 Documentation is available in the [`docs/`](docs/index.md) directory,
@@ -16,12 +16,12 @@ organized around the [Diátaxis](https://diataxis.fr/) framework.
 |------|-------|------|
 | Sphinx configuration | `docs/conf.py` | Templated per project |
 | Build tooling | `docs/Makefile`, `docs/requirements.txt` | Static |
-| Developer tooling | `docs/_dev/` (vale, pa11y, pre-commit, pymarkdown, sphinx-stack updater) | Static |
+| Developer tooling | `docs/_dev/` | Static |
 | HTML templates | `docs/_templates/` (header, footer) | Static |
 | Read the Docs config | `.readthedocs.yaml` | Static |
 | Release note templates | `docs/release-notes/template/` | Static |
 
-## Onboarding a downstream repository
+## Get started
 
 ### Prerequisites
 
@@ -29,7 +29,7 @@ organized around the [Diátaxis](https://diataxis.fr/) framework.
 - Git 2.27+
 - Copier installed: `pipx install copier` or `uv tool install copier`
 
-### Get started
+### Onboard
 
 From the root of your downstream repository:
 

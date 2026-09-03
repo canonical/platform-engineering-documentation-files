@@ -16,8 +16,8 @@ process to bring them under Copier management.
 
 ## Audit your existing files
 
-Compare your repo's files against the [list of generated files](#what-gets-generated).
-Any file that exists in both your repo and the template will be overwritten.
+Compare your repository's files against the [list of generated files](#what-gets-generated).
+Any file that exists in both your repository and the template will be overwritten.
 
 ```bash
 find docs/ -type f | sort
@@ -111,18 +111,12 @@ Test the build:
 cd docs && make html
 ```
 
-If the build succeeds, commit:
-
-```bash
-git add .
-git commit -m "Onboard documentation tooling to Copier-based management"
-```
+If the build succeeds, proceed with committing to your repository.
 
 ## After onboarding
 
 - Your `.copier-answers.yml` is now the source of truth for project-specific
-  values. Do not edit it manually.
-- To pull in future template updates, run `copier update` from the repo root.
-  See [How to update a downstream repository](update-downstream-repo.md).
-- If you need to change a project value (for example, a new Discourse URL), update
+  values. If you need to change a project value (for example, a new Discourse URL), update
   `.copier-answers.yml` and re-run `copier update`.
+- To pull in future template updates, run `copier update` from the repository root.
+  See [How to update a downstream repository](update-downstream-repo.md).
