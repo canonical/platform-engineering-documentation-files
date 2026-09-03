@@ -3,7 +3,13 @@ name: Documentation
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - "README.md"
+      - "docs/**"
   pull_request:
+    paths:
+      - "README.md"
+      - "docs/**"
 
 jobs:
   docs-checks:
