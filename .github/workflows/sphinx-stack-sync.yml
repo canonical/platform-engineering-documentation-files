@@ -12,6 +12,10 @@ permissions:
 jobs:
   sync:
     runs-on: ubuntu-22.04
+    outputs:
+      sync: ${{ steps.check.outputs.sync }}
+      old_version: ${{ steps.check.outputs.current }}
+      new_version: ${{ steps.release.outputs.tag }}
     steps:
       - uses: actions/checkout@v7
 
@@ -48,6 +52,7 @@ jobs:
 
           echo "New version available: $LATEST (current: $CURRENT)"
           echo "sync=true" >> "$GITHUB_OUTPUT"
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
 
       - name: Configure Git
         if: steps.check.outputs.sync == 'true'
@@ -176,3 +181,102 @@ jobs:
             Please check upstream if any changes are needed for the excluded files.
           upsert: true
           ignore-no-changes: true
+
+  analyze-conf-py:
+    needs: sync
+    # Only run when a sync actually happened and we have a previous version to
+    # diff against (the very first run initializes tracking with no old version).
+    if: >-
+      needs.sync.outputs.sync == 'true' &&
+      needs.sync.outputs.old_version != '' &&
+      needs.sync.outputs.old_version != needs.sync.outputs.new_version
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+      pull-requests: write
+      copilot-requests: write
+    steps:
+      # Check out the branch the sync job just created so edits land on the
+      # existing sync PR rather than a fresh branch.
+      - uses: actions/checkout@v7
+        with:
+          ref: chore/sync-sphinx-stack-${{ needs.sync.outputs.new_version }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+
+      - name: Install analysis dependencies
+        run: pip install pyyaml
+
+      - name: Analyze upstream conf.py changes
+        id: analyze
+        run: |
+          OLD="${{ needs.sync.outputs.old_version }}"
+          NEW="${{ needs.sync.outputs.new_version }}"
+          BASE="https://raw.githubusercontent.com/canonical/sphinx-stack"
+
+          python3 scripts/analyze_conf_diff.py \
+            --old-upstream "$BASE/$OLD/docs/conf.py" \
+            --new-upstream "$BASE/$NEW/docs/conf.py" \
+            --section-map scripts/conf_section_map.json \
+            --divergences scripts/conf_divergences.json \
+            --requirements template/docs/requirements.txt \
+            --copier copier.yml \
+            --old-version "$OLD" \
+            --new-version "$NEW" \
+            --output analysis.json
+
+          echo "--- analysis.json ---"
+          cat analysis.json
+
+      - name: Upload analysis report
+        uses: actions/upload-artifact@v4
+        with:
+          name: conf-py-analysis-${{ needs.sync.outputs.new_version }}
+          path: analysis.json
+
+      - name: Install Copilot CLI
+        if: steps.analyze.outcome == 'success'
+        run: npm install -g @github/copilot
+
+        # Agent failures never block the sync PR; it already exists with the
+        # verbatim-synced changes and analysis.json is uploaded regardless.
+      - name: Apply conf.py.jinja updates (agent)
+        id: agent
+        if: steps.analyze.outcome == 'success'
+        continue-on-error: true
+        run: |
+          python3 scripts/build_copilot_prompt.py analysis.json > /tmp/prompt.txt
+          copilot -p "$(cat /tmp/prompt.txt)" \
+            --no-ask-user \
+            --model auto \
+            --allow-tool='read,write,shell(bash tests/test_build.sh:*)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit and push agent changes
+        if: steps.agent.outcome == 'success'
+        run: |
+          git add -A -- template/ copier.yml scripts/ skills/
+          if git diff --cached --quiet; then
+            echo "Agent made no changes to commit."
+          else
+            git commit -m "chore: apply conf.py.jinja updates from sphinx-stack ${{ needs.sync.outputs.new_version }} analysis"
+            git push
+          fi
+
+      - name: Post analysis summary as PR comment
+        if: always() && steps.analyze.outcome == 'success'
+        run: |
+          SUMMARY_FILE=/tmp/agent-summary.md
+          if [ ! -f "$SUMMARY_FILE" ]; then
+            echo "## \U0001F916 conf.py.jinja analysis for sphinx-stack ${{ needs.sync.outputs.new_version }}" > "$SUMMARY_FILE"
+            echo "" >> "$SUMMARY_FILE"
+            echo "The agent step did not produce a summary (it may have failed — see the workflow run logs). \`analysis.json\` is attached to this run as a workflow artifact for manual follow-up." >> "$SUMMARY_FILE"
+          fi
+          gh pr comment "chore/sync-sphinx-stack-${{ needs.sync.outputs.new_version }}" \
+            --body-file "$SUMMARY_FILE"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

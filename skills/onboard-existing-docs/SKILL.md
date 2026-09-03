@@ -13,7 +13,7 @@ license: Apache-2.0
 metadata:
   author: Canonical/platform-engineering
   summary: Onboard a downstream repo with pre-existing documentation tooling into the Copier-based central management solution
-  version: "1.0.0"
+  version: "1.0.1"
   tags:
     - canonical
     - platform-engineering
@@ -87,7 +87,7 @@ values forward:
 | File | Purpose |
 |---|---|
 | [`question-bank.md`](references/question-bank.md) | Structured questions for user prompts at key decision points |
-| [`extract_conf_values.py`](assets/extract_conf_values.py) | Python script to automate Phase 2 value extraction from `conf.py` |
+| [`extract_conf_values.py`](../../scripts/extract_conf_values.py) | Python script to automate Phase 2 value extraction from `conf.py` |
 | [`PR-GUIDE.md`](assets/PR-GUIDE.md) | PR description structure, reviewer priority tiers, and human action checklist |
 
 ---
