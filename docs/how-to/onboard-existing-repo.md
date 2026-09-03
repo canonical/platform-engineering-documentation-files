@@ -6,8 +6,7 @@ process to bring them under Copier management.
 
 > **AI-assisted onboarding**: An AI agent skill is available to guide you
 > through this process automatically. See
-> [`skills/onboard-existing-docs/SKILL.md`](../../skills/onboard-existing-docs/SKILL.md)
-> for the full agent workflow.
+> [Skills reference](../reference/skills.md).
 
 ## Prerequisites
 

@@ -1,26 +1,13 @@
-# Skills in this repository
+# Skills
 
-This repository includes AI-assisted skills that automate common workflows.
-Skills are defined in the `skills/` directory and are designed to be used
-with an AI coding agent.
+This repository includes a `skills/` directory containing AI skills to assist in common tasks related to this solution.
 
-## `onboard-existing-docs`
+## Onboarding a repository with preexisting files
 
-**Location:** [`skills/onboard-existing-docs/SKILL.md`](../../skills/onboard-existing-docs/SKILL.md)
+The `onboard-existing-docs` skill onboards a downstream repository that already has documentation
+tooling files contained in this solution.
 
-Onboards a downstream repository that already has unmanaged documentation
-tooling files (Sphinx config, Makefile, requirements, and so on) into the
-Copier-based management solution.
-
-### What it does
-
-- Audits the existing documentation tooling files
-- Extracts project-specific values from the existing `docs/conf.py`
-- Identifies downstream-only customizations to preserve
-- Backs up and removes overlapping tooling files
-- Runs Copier to generate the scaffold
-- Re-applies downstream customizations
-- Validates the build
+The skill uses a multi-phase approach to audit the existing files, runs Copier to generate the solution's scaffold, and re-applies the the repository's customizations.
 
 ### Assumptions
 
@@ -29,23 +16,4 @@ Copier-based management solution.
 - The downstream repo contains unmanaged copies of one or more files that
   overlap with the template's generated output.
 
-### Phase-by-phase workflow
-
-The skill runs through eight sequential phases:
-
-| Phase | File | What happens |
-|---|---|---|
-| 1 | [`phase-1-audit.md`](../../skills/onboard-existing-docs/references/phase-1-audit.md) | Audits the downstream repo for files that overlap with the template |
-| 2 | [`phase-2-extract-values.md`](../../skills/onboard-existing-docs/references/phase-2-extract-values.md) | Extracts project-specific values from the existing `docs/conf.py` |
-| 3 | [`phase-3-identify-customizations.md`](../../skills/onboard-existing-docs/references/phase-3-identify-customizations.md) | Identifies downstream-only customizations to preserve |
-| 4 | [`phase-4-backup-remove.md`](../../skills/onboard-existing-docs/references/phase-4-backup-remove.md) | Backs up and removes overlapping tooling files |
-| 5 | [`phase-5-run-copier.md`](../../skills/onboard-existing-docs/references/phase-5-run-copier.md) | Runs Copier to generate the documentation scaffold |
-| 6 | [`phase-6-reapply-customizations.md`](../../skills/onboard-existing-docs/references/phase-6-reapply-customizations.md) | Re-applies downstream customizations to the generated files |
-| 7 | [`phase-7-validate-commit.md`](../../skills/onboard-existing-docs/references/phase-7-validate-commit.md) | Validates the build and commits the result |
-| 8 | [`phase-8-post-onboarding.md`](../../skills/onboard-existing-docs/references/phase-8-post-onboarding.md) | Post-onboarding guidance and next steps |
-
-### How to invoke
-
-Use the skill with an AI coding agent that supports skill execution. Refer to
-the [SKILL.md](../../skills/onboard-existing-docs/SKILL.md) file for the full
-agent workflow and instructions.
+See also: [`skills/onboard-existing-docs/SKILL.md`](../../skills/onboard-existing-docs/SKILL.md)

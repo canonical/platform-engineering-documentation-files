@@ -1,6 +1,7 @@
 # Variables used by Copier
 
-This page lists every variable defined in `copier.yml`, grouped by category.
+The variables defined in `copier.yml` provide the ability to customize
+the files in this solution based on the downstream repository. 
 These variables are prompted during `copier copy` and stored in the downstream
 repo's `.copier-answers.yml`.
 
@@ -19,7 +20,7 @@ repo's `.copier-answers.yml`.
 | `discourse` | `str` | `""` | Your Discourse instance URL. Leave empty if none. | `docs/conf.py` |
 | `mattermost` | `str` | `""` | Your Mattermost channel URL. Leave empty if none. | `docs/conf.py` |
 | `matrix` | `str` | `""` | Your Matrix channel URL. Leave empty if none. | `docs/conf.py` |
-| `github_url` | `str` | `""` | GitHub repository URL for "Edit on GitHub" links and issue reporting. Leave empty if none. | `docs/conf.py` |
+| `github_url` | `str` | `""` | GitHub repository URL for "Edit on GitHub" links and issue reporting. Leave empty to disable. | `docs/conf.py` |
 | `repo_default_branch` | `str` | `"main"` | Default branch name of your repository | `docs/conf.py` |
 | `repo_folder` | `str` | `"/docs/"` | Path to the docs folder within your repository | `docs/conf.py` |
 
@@ -49,5 +50,5 @@ repo's `.copier-answers.yml`.
 
 | Variable | Type | Default | Help | Used in |
 |---|---|---|---|---|
-| `rtd_slug` | `str` | `""` | Read the Docs project slug (only needed if hosted on `documentation.ubuntu.com`). Leave empty otherwise. | `docs/_static/js/overwrite_links.js` |
-| `old_domain` | `str` | `""` | Old Read the Docs domain to redirect from (for example, `canonical-discourse-k8s-charm.readthedocs-hosted.com`). Leave empty to skip link rewriting. | `docs/_static/js/overwrite_links.js` |
+| `rtd_slug` | `str` | `""` | Read the Docs project slug (needed if hosted on `canonical.com` or `documentation.ubuntu.com`). Leave empty otherwise. | `docs/_static/js/overwrite_links.js` |
+| `old_domain` | `str` | `""` | Old Read the Docs domain to redirect from (for example, `canonical-canonical-charm.readthedocs-hosted.com`). Leave empty to skip link rewriting. | `docs/_static/js/overwrite_links.js` |
