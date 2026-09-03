@@ -1,0 +1,65 @@
+{
+  "_comment": "Encodes intentional differences between template/docs/conf.py.jinja and the upstream canonical/sphinx-stack conf.py. Consumed by scripts/analyze_conf_diff.py to avoid false positives when upstream changes a key we deliberately diverge on. 'rule' governs how upstream changes to the key are handled.",
+  "_rules": {
+    "ignore_upstream_changes": "This key is a template addition or intentional replacement. Report the upstream change for awareness but never auto-apply it.",
+    "merge_upstream_changes_preserve_custom": "This key is a list/dict that combines upstream entries with our own. Apply upstream additions/removals but never touch 'custom_entries'.",
+    "keep_active": "Upstream keeps this commented out; we keep it active (often templated). Apply upstream value changes but keep it uncommented."
+  },
+  "divergences": {
+    "version": {
+      "type": "addition",
+      "rule": "ignore_upstream_changes",
+      "description": "Added by this repo; drives ogp_site_url and html_baseurl construction.",
+      "rationale": "Upstream may not define a top-level 'version' variable. Removing or changing it upstream must not affect our template."
+    },
+    "sitemap_filename": {
+      "type": "addition",
+      "rule": "ignore_upstream_changes",
+      "description": "Explicitly set to 'doc-sitemap.xml' for consistency across downstream repos.",
+      "rationale": "We standardize the sitemap filename regardless of upstream defaults."
+    },
+    "html_js_files": {
+      "type": "partial_divergence",
+      "rule": "merge_upstream_changes_preserve_custom",
+      "custom_entries": ["js/overwrite_links.js"],
+      "description": "Upstream list plus our template-specific overwrite_links.js.",
+      "rationale": "overwrite_links.js is a template addition for link rewriting; preserve it while accepting upstream additions."
+    },
+    "slug": {
+      "type": "uncommented",
+      "rule": "keep_active",
+      "description": "Commented out upstream; active here inside a {% if rtd_slug %} conditional.",
+      "rationale": "Required for Read the Docs-hosted downstream projects."
+    },
+    "html_theme_options": {
+      "type": "uncommented",
+      "rule": "keep_active",
+      "description": "Commented out upstream; active here inside a {% if source_edit_link %} conditional.",
+      "rationale": "Downstream projects need the edit-on-GitHub button."
+    },
+    "html_static_path": {
+      "type": "uncommented",
+      "rule": "keep_active",
+      "description": "Commented out upstream; active here.",
+      "rationale": "The template ships a _static/ directory that must be registered."
+    },
+    "templates_path": {
+      "type": "uncommented",
+      "rule": "keep_active",
+      "description": "Commented out upstream; active here.",
+      "rationale": "The template ships a _templates/ directory that must be registered."
+    },
+    "ogp_site_url": {
+      "type": "templated_differently",
+      "rule": "ignore_upstream_changes",
+      "description": "Upstream uses a hardcoded URL; we use a {% if rtd_slug %} conditional falling back to READTHEDOCS_CANONICAL_URL.",
+      "rationale": "The environment-variable-based lookup is the intended multi-project pattern."
+    },
+    "html_baseurl": {
+      "type": "templated_differently",
+      "rule": "ignore_upstream_changes",
+      "description": "Upstream uses a hardcoded URL; we use a {% if rtd_slug %} conditional falling back to READTHEDOCS_CANONICAL_URL.",
+      "rationale": "Same as ogp_site_url — environment-variable-based lookup is intentional."
+    }
+  }
+}

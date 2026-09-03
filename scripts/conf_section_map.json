@@ -1,0 +1,190 @@
+{
+  "_comment": "Maps each upstream conf.py config key to its location in template/docs/conf.py.jinja. Consumed by scripts/analyze_conf_diff.py. 'line_anchor' is a unique substring used to locate the key in the template. 'type' drives how a detected change is applied. 'copier_key' links a value to a copier.yml variable when type is 'copier_variable'.",
+  "template_path": "template/docs/conf.py.jinja",
+  "sections": {
+    "project": {
+      "jinja_section": "Project information",
+      "line_anchor": "project = \"{{ project }}\"",
+      "type": "copier_variable",
+      "copier_key": "project"
+    },
+    "author": {
+      "jinja_section": "Project information",
+      "line_anchor": "author = \"{{ author }}\"",
+      "type": "copier_variable",
+      "copier_key": "author"
+    },
+    "copyright": {
+      "jinja_section": "Project information",
+      "line_anchor": "copyright = f\"{datetime.date.today().year}\"",
+      "type": "hardcoded"
+    },
+    "version": {
+      "jinja_section": "Project information",
+      "line_anchor": "version = f\"{os.environ.get('READTHEDOCS_VERSION', 'local')}\"",
+      "type": "hardcoded"
+    },
+    "html_title": {
+      "jinja_section": "Project information",
+      "line_anchor": "html_title = project + \" documentation\"",
+      "type": "hardcoded"
+    },
+    "ogp_site_url": {
+      "jinja_section": "Project information",
+      "line_anchor": "ogp_site_url =",
+      "type": "jinja_conditional"
+    },
+    "ogp_site_name": {
+      "jinja_section": "Project information",
+      "line_anchor": "ogp_site_name = project",
+      "type": "hardcoded"
+    },
+    "ogp_image": {
+      "jinja_section": "Project information",
+      "line_anchor": "ogp_image = \"{{ ogp_image }}\"",
+      "type": "copier_variable",
+      "copier_key": "ogp_image"
+    },
+    "html_favicon": {
+      "jinja_section": "Project information",
+      "line_anchor": "html_favicon = \"{{ html_favicon }}\"",
+      "type": "jinja_conditional",
+      "copier_key": "html_favicon"
+    },
+    "html_context": {
+      "jinja_section": "Project information",
+      "line_anchor": "html_context = {",
+      "type": "dict",
+      "copier_mapping": {
+        "product_page": "product_page",
+        "product_tag": "product_tag",
+        "discourse": "discourse",
+        "mattermost": "mattermost",
+        "matrix": "matrix",
+        "github_url": "github_url",
+        "repo_default_branch": "repo_default_branch",
+        "repo_folder": "repo_folder",
+        "display_contributors": "display_contributors"
+      }
+    },
+    "html_theme_options": {
+      "jinja_section": "Project information",
+      "line_anchor": "html_theme_options = {",
+      "type": "jinja_conditional",
+      "copier_key": "source_edit_link"
+    },
+    "slug": {
+      "jinja_section": "Project information",
+      "line_anchor": "slug = \"{{ rtd_slug }}\"",
+      "type": "jinja_conditional",
+      "copier_key": "rtd_slug"
+    },
+    "html_baseurl": {
+      "jinja_section": "Sitemap configuration",
+      "line_anchor": "html_baseurl =",
+      "type": "jinja_conditional"
+    },
+    "sitemap_url_scheme": {
+      "jinja_section": "Sitemap configuration",
+      "line_anchor": "sitemap_url_scheme = \"{link}\"",
+      "type": "hardcoded"
+    },
+    "sitemap_filename": {
+      "jinja_section": "Sitemap configuration",
+      "line_anchor": "sitemap_filename = \"doc-sitemap.xml\"",
+      "type": "hardcoded"
+    },
+    "sitemap_show_lastmod": {
+      "jinja_section": "Sitemap configuration",
+      "line_anchor": "sitemap_show_lastmod = True",
+      "type": "hardcoded"
+    },
+    "sitemap_excludes": {
+      "jinja_section": "Sitemap configuration",
+      "line_anchor": "sitemap_excludes = [",
+      "type": "list"
+    },
+    "html_static_path": {
+      "jinja_section": "Template and asset locations",
+      "line_anchor": "html_static_path = [\"_static\"]",
+      "type": "list"
+    },
+    "templates_path": {
+      "jinja_section": "Template and asset locations",
+      "line_anchor": "templates_path = [\"_templates\"]",
+      "type": "list"
+    },
+    "rediraffe_redirects": {
+      "jinja_section": "Redirects",
+      "line_anchor": "rediraffe_redirects = \"redirects.txt\"",
+      "type": "hardcoded"
+    },
+    "rediraffe_dir_only": {
+      "jinja_section": "Redirects",
+      "line_anchor": "rediraffe_dir_only = True",
+      "type": "hardcoded"
+    },
+    "llms_txt_description": {
+      "jinja_section": "sphinx-llm configuration",
+      "line_anchor": "llms_txt_description = textwrap.dedent(",
+      "type": "copier_variable",
+      "copier_key": "llms_txt_description"
+    },
+    "markdown_http_base": {
+      "jinja_section": "sphinx-llm configuration",
+      "line_anchor": "markdown_http_base = html_baseurl",
+      "type": "hardcoded"
+    },
+    "linkcheck_ignore": {
+      "jinja_section": "Link checker exceptions",
+      "line_anchor": "linkcheck_ignore = [",
+      "type": "list"
+    },
+    "linkcheck_anchors_ignore_for_url": {
+      "jinja_section": "Link checker exceptions",
+      "line_anchor": "linkcheck_anchors_ignore_for_url = [",
+      "type": "list"
+    },
+    "linkcheck_timeout": {
+      "jinja_section": "Link checker exceptions",
+      "line_anchor": "linkcheck_timeout = {{ linkcheck_timeout }}",
+      "type": "copier_variable",
+      "copier_key": "linkcheck_timeout"
+    },
+    "linkcheck_retries": {
+      "jinja_section": "Link checker exceptions",
+      "line_anchor": "linkcheck_retries = 3",
+      "type": "hardcoded"
+    },
+    "extensions": {
+      "jinja_section": "Configuration extras",
+      "line_anchor": "extensions = [",
+      "type": "list"
+    },
+    "exclude_patterns": {
+      "jinja_section": "Configuration extras",
+      "line_anchor": "exclude_patterns = [",
+      "type": "list"
+    },
+    "html_css_files": {
+      "jinja_section": "Configuration extras",
+      "line_anchor": "html_css_files = [",
+      "type": "list"
+    },
+    "html_js_files": {
+      "jinja_section": "Configuration extras",
+      "line_anchor": "html_js_files = [",
+      "type": "list"
+    },
+    "rst_prolog": {
+      "jinja_section": "Configuration extras",
+      "line_anchor": "# rst_prolog =",
+      "type": "commented_out"
+    },
+    "intersphinx_mapping": {
+      "jinja_section": "Configuration extras",
+      "line_anchor": "# intersphinx_mapping = {",
+      "type": "commented_out"
+    }
+  }
+}
