@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   sync:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     outputs:
       sync: ${{ steps.check.outputs.sync }}
       old_version: ${{ steps.check.outputs.current }}
@@ -190,7 +190,7 @@ jobs:
       needs.sync.outputs.sync == 'true' &&
       needs.sync.outputs.old_version != '' &&
       needs.sync.outputs.old_version != needs.sync.outputs.new_version
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
       pull-requests: write
