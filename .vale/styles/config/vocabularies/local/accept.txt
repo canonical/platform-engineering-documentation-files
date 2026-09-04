@@ -1,0 +1,12 @@
+Canonical Sphinx Stack
+Copier
+favicon
+gatekeeping
+GitHub Actions
+Makefile
+onboarding
+onboards
+Platform Engineering
+Read the Docs
+templated
+unmanaged
