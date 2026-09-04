@@ -1,4 +1,4 @@
-# How to onboard a repository with no documentation files
+# How to onboard a repository with no Sphinx Stack files
 
 Repositories with no existing `sphinx-stack` files don't need to worry
 about overwriting project-specific customizations and can therefore

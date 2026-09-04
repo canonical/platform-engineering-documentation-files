@@ -1,8 +1,8 @@
-# How to onboard a repository with existing documentation files
+# How to onboard a repository with existing Sphinx Stack files
 
-If your repository already contains unmanaged copies of the documentation
-tooling files (Sphinx config, Makefile, requirements, and so on), follow this
-process to bring them under Copier management.
+If your repository already contains unmanaged copies of files from the
+Canonical Sphinx Stack, directly onboarding your repository into this
+solution could result in a loss of customized components.
 
 > **AI-assisted onboarding**: An AI agent skill is available to guide you
 > through this process automatically. See
@@ -23,20 +23,6 @@ Any file that exists in both your repository and the template will be overwritte
 find docs/ -type f | sort
 ls -la .readthedocs.yaml 2>/dev/null || echo "No .readthedocs.yaml found"
 ```
-
-### What gets generated
-
-| Template source | Downstream output |
-|---|---|
-| `conf.py.jinja` | `docs/conf.py` |
-| `Makefile` | `docs/Makefile` |
-| `requirements.txt` | `docs/requirements.txt` |
-| `.gitignore` | `docs/.gitignore` |
-| `_dev/*` | `docs/_dev/*` |
-| `_templates/*` | `docs/_templates/*` |
-| `release-notes/template/*` | `docs/release-notes/template/*` |
-| `.readthedocs.yaml` | `.readthedocs.yaml` |
-| `{{ _copier_conf.answers_file }}.jinja` | `.copier-answers.yml` |
 
 ## Extract project-specific values
 
@@ -116,7 +102,7 @@ If the build succeeds, proceed with committing to your repository.
 ## After onboarding
 
 - Your `.copier-answers.yml` is now the source of truth for project-specific
-  values. If you need to change a project value (for example, a new Discourse URL), update
+  values. If you need to change a project value, update
   `.copier-answers.yml` and re-run `copier update`.
 - To pull in future template updates, run `copier update` from the repository root.
   See [How to update a downstream repository](update-downstream-repo.md).

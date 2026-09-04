@@ -2,7 +2,7 @@
 
 The development of this solution took place over roughly six months starting from the initial conversations and brainstorming. The ideation phase revealed that the solution would have to include opinions about the design and update workflow to accommodate the needs of the Platform Engineering team documentation sets.
 
-## Why Copier?
+## Choosing Copier as the tool
 
 While developing this solution, two different tools were considered: Cruft and Copier. 
 We chose [Copier](https://copier.readthedocs.io/) for the following reasons:
@@ -13,7 +13,7 @@ We chose [Copier](https://copier.readthedocs.io/) for the following reasons:
 
 * **More automation-friendly**: Developing the [`onboard-existing-docs` skill](../../skills/onboard-existing-docs/SKILL.md) revealed that Copier better supports a stable and reproducible process. We knew that the solution would need to support onboarding of repositories with existing documentation files, making Copier an ideal candidate.
 
-## Why the Canonical Sphinx Stack?
+## Using Canonical Sphinx Stack as the foundation
 
 The target repositories for this solution are ones maintained by the Platform Engineering team at Canonical. We use the [Sphinx Stack](https://documentation.ubuntu.com/sphinx-stack/latest/) as the underlying scaffolding, tooling, and theming for our documentation projects.
 

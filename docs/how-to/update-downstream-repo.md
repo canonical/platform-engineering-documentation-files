@@ -27,8 +27,6 @@ Downstream repositories can set up automated Copier updates using the callable
 workflow provided by this template. The workflow checks for template updates,
 runs `copier update`, and opens a pull request with the changes.
 
-### Set up the workflow
-
 Add a workflow file to your downstream repository (e.g.,
 `.github/workflows/sync-docs-template.yml`):
 
@@ -57,11 +55,11 @@ If `copier update` produces merge conflicts,
 they are left inline for you to review and resolve before merging the changes.
 
 We recommend running the workflow on a schedule and leaving a `workflow_dispatch`
-trigger so you can start the update manually.
+trigger so you can start the update manually if needed.
 
 ## Update project-specific values
 
-If you need to change a project-specific value (for example, a new Discourse URL):
+If you need to change a project-specific value:
 
 1. Update the value in `.copier-answers.yml`.
 2. Run `copier update` to re-render templated files with the new value.
