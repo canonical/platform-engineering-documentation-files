@@ -45,10 +45,13 @@ repository's `.copier-answers.yml`.
 |---|---|---|---|---|
 | `display_contributors` | `bool` | `false` | Show a list of contributors on each page? | `docs/conf.py` |
 | `source_edit_link` | `str` | `""` | URL for the "Edit on GitHub" link on each page. Leave empty to hide the edit button. | `docs/conf.py` |
+| `llms_txt_description` | `str` | `""` | Short description for `llms.txt` | `docs/conf.py` |
+| `linkcheck_timeout` | `int` | `30` | Seconds to wait for each link check request. Lower = faster, higher = fewer timeouts. | `docs/conf.py` |
 
 ## Read the Docs
 
 | Variable | Type | Default | Help | Used in |
 |---|---|---|---|---|
-| `rtd_slug` | `str` | `""` | Read the Docs project slug (needed if hosted on `canonical.com` or `documentation.ubuntu.com`). Leave empty otherwise. | `docs/conf.py` |
+| `rtd_slug` | `str` | `""` | Read the Docs project slug (needed if hosted on `canonical.com` or `documentation.ubuntu.com`). Leave empty otherwise. Setting the slug affects `ogp_site_url` and `html_baseurl` | `docs/conf.py` |
 | `old_domain` | `str` | `""` | Old Read the Docs domain to redirect from (for example, `canonical-canonical-charm.readthedocs-hosted.com`). Leave empty to skip link rewriting. | `docs/_static/js/overwrite_links.js` |
+| `new_domain` | `str` | `""` | New Read the Docs domain to redirect to (for example, `canonical.com/juju/docs/charm`). Leave empty to skip link rewriting. | `docs/_static/js/overwrite_links.js` |
