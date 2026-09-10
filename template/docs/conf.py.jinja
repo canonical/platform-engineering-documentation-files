@@ -226,6 +226,11 @@ extensions = [
     "sphinx_sitemap",
 ]
 
+# Lets a plain ```mermaid fence (which GitHub also renders natively) be
+# treated as the {mermaid} directive, instead of requiring that directive
+# syntax explicitly.
+myst_fence_as_directive = {"mermaid"}
+
 # Excludes files or directories from processing
 exclude_patterns = [
     ".venv*",
