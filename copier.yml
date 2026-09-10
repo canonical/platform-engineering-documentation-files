@@ -5,6 +5,7 @@ _exclude:
 _skip_if_exists: # do not overwrite the file, but include for new projects
   - "redirects.txt" 
   - "_templates/header.html" 
+  - "_static/js/overwrite_links.js"
 
 # ── Core identity ──────────────────────────────────────────────
 project:
@@ -92,6 +93,14 @@ source_edit_link:
   default: ""
 
 # ── Read the Docs ──────────────────────────────────────────────
+docs_host:
+  type: str
+  help: Domain where your docs are hosted. Choose 'canonical.com' or 'documentation.ubuntu.com'.
+  default: "canonical.com"
+  choices:
+    - "canonical.com"
+    - "documentation.ubuntu.com"
+
 rtd_slug:
   type: str
   help: Read the Docs project slug (only needed if hosted on documentation.ubuntu.com). Leave empty otherwise.
@@ -104,7 +113,7 @@ old_domain:
 
 new_domain:
   type: str
-  help: New canonical.com path to redirect to (e.g., 'canonical.com/juju/docs/discourse-k8s-charm'). Leave empty to skip link rewriting.
+  help: New docs domain path to redirect to (e.g., 'canonical.com/juju/docs/discourse-k8s-charm'). Leave empty to skip link rewriting.
   default: ""
 
 # ── LLM-friendly description ───────────────────────────────────
