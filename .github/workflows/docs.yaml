@@ -1,0 +1,20 @@
+name: Documentation
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "README.md"
+      - "docs/**"
+  pull_request:
+    paths:
+      - "README.md"
+      - "docs/**"
+
+jobs:
+  docs-checks:
+    uses: canonical/operator-workflows/.github/workflows/docs.yaml@main
+    secrets: inherit
+    with:
+      vale-files: '["README.md", "docs/"]'
+      linkcheck-files: "README.md docs/**"
