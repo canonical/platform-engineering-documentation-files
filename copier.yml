@@ -2,6 +2,9 @@ _subdirectory: template
 _min_copier_version: "9.0"
 _exclude:
   - ".sphinx-stack-version"
+_skip_if_exists: # do not overwrite the file, but include for new projects
+  - "redirects.txt" 
+  - "_templates/header.html" 
 
 # ── Core identity ──────────────────────────────────────────────
 project:
