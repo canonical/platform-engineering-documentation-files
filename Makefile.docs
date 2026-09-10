@@ -26,15 +26,13 @@ docs-clean: vale-clean
 .PHONY: .check-vale
 .check-vale:
 ifndef HAS_VALE
-	$(call errmsg,'vale' is not installed. Please install it first) \
-	exit 1;
+	$(call errmsg,'vale' is not installed. Please install it first)
 endif
 
 .PHONY: .check-lychee
 .check-lychee:
 ifndef HAS_LYCHEE
-	$(call errmsg,'lychee' is not installed. Please install it first) \
-	exit 1;
+	$(call errmsg,'lychee' is not installed. Please install it first)
 endif
 
 
