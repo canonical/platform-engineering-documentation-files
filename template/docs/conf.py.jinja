@@ -36,9 +36,9 @@ version = f"{os.environ.get('READTHEDOCS_VERSION', 'local')}"
 html_title = project + " documentation"
 
 # Documentation website URL
-{% if rtd_slug %}
+{% if rtd_slug and docs_host == "canonical.com" %}
 ogp_site_url = f"https://canonical.com/{{ rtd_slug }}/{version}/"
-{% else %}
+{% elif rtd_slug %}
 ogp_site_url = os.environ.get("READTHEDOCS_CANONICAL_URL", "/")
 {% endif %}
 
@@ -109,7 +109,7 @@ slug = "{{ rtd_slug }}"
 #######################
 
 # Use RTD canonical URL to ensure duplicate pages have a specific canonical URL
-{% if rtd_slug %}
+{% if rtd_slug and docs_host == "canonical.com" %}
 html_baseurl = f"https://canonical.com/{{ rtd_slug }}/{version}/"
 {% else %}
 html_baseurl = os.environ.get("READTHEDOCS_CANONICAL_URL", "/")
@@ -226,6 +226,11 @@ extensions = [
     "sphinx_sitemap",
 ]
 
+# Lets a plain ```mermaid fence (which GitHub also renders natively) be
+# treated as the {mermaid} directive, instead of requiring that directive
+# syntax explicitly.
+myst_fence_as_directive = {"mermaid"}
+
 # Excludes files or directories from processing
 exclude_patterns = [
     ".venv*",
@@ -246,6 +251,6 @@ html_js_files = [
 # """
 
 # Intersphinx mappings for cross-referencing external documentation.
-# intersphinx_mapping = {
-#     "juju": ("https://canonical-juju.readthedocs-hosted.com/en/latest/", None),
-# }
+intersphinx_mapping = {
+    "juju": ("https://canonical.com/juju/docs/juju-cli/3.6/", None),
+}

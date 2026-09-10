@@ -1,3 +1,4 @@
+{% if old_domain and new_domain %}
 // Replace oldDomain with newDomain
 const oldDomain = '{{ old_domain }}';
 const newDomain = '{{ new_domain }}';
@@ -36,3 +37,8 @@ const observer = new MutationObserver(function(mutations, obs) {
 });
 
 observer.observe(document.body, { childList: true, subtree: true });
+{% else %}
+// Domain redirects are not configured (old_domain and new_domain are empty).
+// This file is only needed when migrating from a readthedocs-hosted.com domain
+// to a new docs domain. You can safely delete this file.
+{% endif %}
