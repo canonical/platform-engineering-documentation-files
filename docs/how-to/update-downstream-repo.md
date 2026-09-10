@@ -59,8 +59,15 @@ trigger so you can start the update manually if needed.
 
 ## Update project-specific values
 
-If you need to change a project-specific value:
+If you need to change a project-specific value, pass the new value
+in `copier update` using the `--data` flag. For example, update
+the `discourse` value using:
 
-1. Update the value in `.copier-answers.yml`.
-2. Run `copier update` to re-render templated files with the new value.
-3. Review and commit the changes.
+```
+copier update --data discourse="https://discourse.example.com"
+```
+
+Or run `copier update` with no arguments and re-answer the questionnaire;
+your previous answers are offered as defaults. Review and commit the result.
+
+> See also: [Never change the answers file manually - copier](https://copier.readthedocs.io/en/stable/updating/#never-change-the-answers-file-manually)

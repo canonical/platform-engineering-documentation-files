@@ -15,6 +15,7 @@ organized around the [Diátaxis](https://diataxis.fr/) framework.
 | Area | Files | Type |
 |------|-------|------|
 | Sphinx configuration | `docs/conf.py` | Templated per project |
+| URL domain configuration | `docs/_static/js/overwrite_links.js` | Templated per project |
 | Build tooling | `docs/Makefile`, `docs/requirements.txt` | Static |
 | Developer tooling | `docs/_dev/` | Static |
 | HTML templates | `docs/_templates/` (header, footer) | Static |
@@ -46,7 +47,7 @@ After generation, review the changes and commit.
 
 To make changes to the template itself:
 
-1. Edit files under `template/` — these are what get rendered into downstream repos.
+1. Edit files under `template/` — these are what get rendered into downstream repositories.
    - Files ending in `.jinja` are Jinja2 templates that use variables from `copier.yml`.
    - Files without `.jinja` are copied as-is.
 2. If you add new variables, update `copier.yml` with the corresponding questions.

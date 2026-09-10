@@ -16,7 +16,7 @@ solution could result in a loss of customized components.
 
 ## Audit your existing files
 
-Compare your repository's files against the [list of generated files](#what-gets-generated).
+Compare your repository's files against the [list of generated files](../reference/managed-files.md).
 Any file that exists in both your repository and the template will be overwritten.
 
 ```bash
@@ -44,15 +44,11 @@ Find things in your current `conf.py`, `Makefile`, or `requirements.txt` that
 are unique to your project and not part of the standard template. You will
 re-apply these after generation.
 
-## Back up and remove overlapping files
+## Remove overlapping files
 
-**Back up** your existing tooling files:
+Either back up the overlapping files, or use a working branch to protect
+your project's custom files from being overwritten.
 
-```bash
-mkdir /tmp/docs-backup
-cp -r docs/ /tmp/docs-backup/
-cp .readthedocs.yaml /tmp/docs-backup/ 2>/dev/null || true
-```
 
 **Remove only the tooling files** that overlap with the template.
 Do **not** remove your documentation content (`.md`, `.rst`, `_static/`,
@@ -72,20 +68,12 @@ From the root of your downstream repository:
 copier copy gh:canonical/platform-engineering-documentation-files.git .
 ```
 
-Copier will prompt you with the questionnaire. Use the values you extracted
-in Step 2.
+Copier will prompt you with the questionnaire. Use the values you extracted previously.
 
 ## Re-apply downstream customizations
 
-Compare the newly generated files against your backup and re-apply any
-project-specific changes:
-
-```bash
-diff /tmp/docs-backup/conf.py docs/conf.py
-diff /tmp/docs-backup/Makefile docs/Makefile
-diff /tmp/docs-backup/requirements.txt docs/requirements.txt
-```
-
+Compare the newly generated files against your backup or main branch,
+and re-apply any project-specific changes.
 Add back any project-specific extensions, Makefile targets, or extra
 Python dependencies.
 
@@ -102,7 +90,7 @@ If the build succeeds, proceed with committing to your repository.
 ## After onboarding
 
 - Your `.copier-answers.yml` is now the source of truth for project-specific
-  values. If you need to change a project value, update
-  `.copier-answers.yml` and re-run `copier update`.
+  values. If you need to change a project value, use `copier update --data` and
+  pass the updated value. See also [the update guide](update-downstream-repo.md).
 - To pull in future template updates, run `copier update` from the repository root.
   See [How to update a downstream repository](update-downstream-repo.md).

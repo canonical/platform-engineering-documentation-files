@@ -25,19 +25,8 @@ copier copy gh:canonical/platform-engineering-documentation-files.git .
 
 Copier will prompt you with a series of questions about your project. Answer them to generate the documentation scaffold. 
 
-After the command completes, your repository should include the following files:
-
-| File | Purpose |
-|---|---|
-| `docs/conf.py` | Sphinx configuration with your project's values filled in |
-| `docs/Makefile` | Build tooling for local development |
-| `docs/requirements.txt` | Python dependencies for building the docs |
-| `docs/.gitignore` | Ignore rules for build artifacts |
-| `docs/_dev/` | Developer tooling (vale, pa11y, pre-commit, and more) |
-| `docs/_templates/` | HTML header and footer templates |
-| `docs/release-notes/template/` | Release note artifact templates |
-| `.readthedocs.yaml` | Read the Docs build configuration |
-| `.copier-answers.yml` | Records your answers for future updates |
+After the command completes, your repository should include the files contained in
+the solution along with `.copier-answers.yml` which records your answers for future updates.
 
 ## Validate
 
@@ -52,8 +41,8 @@ If the build succeeds, commit the generated files to your repository.
 ## After onboarding
 
 - Your `.copier-answers.yml` is now the source of truth for project-specific
-  values. If you need to change a project value (for example, a new Discourse URL),
-  update `.copier-answers.yml` and re-run `copier update`.
+  values. If you need to change a project value, use `copier update --data` and
+  pass the updated value. See also [the update guide](update-downstream-repo.md).
 - To pull in future template updates, run `copier update` from the repository root.
   See [How to update a downstream repository](update-downstream-repo.md).
 - To avoid duplicate maintenance, disable any other tools from updating files

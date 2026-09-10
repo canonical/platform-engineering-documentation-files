@@ -58,7 +58,7 @@ vale: .check-vale vale-sync ## Run Vale checks on docs
 
 .PHONY: lychee
 lychee: .check-lychee ## Run Lychee checks on docs
-	$(call msg,--- Running lychee checks on "$(LYCHEE_DOCS_FILES)"... ---)
+	$(call msg,--- Running lychee checks on "$(DOCS_FILES)"... ---)
 	@lychee $(DOCS_FILES)
 
 # ==============================================================================

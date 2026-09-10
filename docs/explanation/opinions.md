@@ -4,7 +4,7 @@ The development of this solution took place over roughly six months starting fro
 
 ## Choosing Copier as the tool
 
-While developing this solution, two different tools were considered: Cruft and Copier. 
+We considered various tools and approaches while developing this solution.
 We chose [Copier](https://copier.readthedocs.io/) for the following reasons:
 
 * **Lower operational complexity**: We discovered that Copier needed fewer caveats and workarounds for the solution.
@@ -12,6 +12,16 @@ We chose [Copier](https://copier.readthedocs.io/) for the following reasons:
 * **Alignment with goals**: Copier aligned better with the needs of this solution, which requires managing files identical across all downstream repositories alongside customized files.
 
 * **More automation-friendly**: Developing the [`onboard-existing-docs` skill](../../skills/onboard-existing-docs/SKILL.md) revealed that Copier better supports a stable and reproducible process. We knew that the solution would need to support onboarding of repositories with existing documentation files, making Copier an ideal candidate.
+
+### Alternate approaches
+
+The following approaches were also considered but were ultimately rejected in favor of Copier:
+
+* **Cruft**: Similar to Copier, [Cruft](https://cruft.github.io/cruft/) uses a template expansion engine to version-control projects and automate upgrades. We tested a Cruft-based solution and found that the onboarding workflow was brittle and required more human intervention (closing off opportunities for AI assistance).
+* **Git subtree**: Required more process changes within Platform Engineering, the upgrade process would be more difficult to automate, and the documentation lifecycle would be separated from the code.
+* **Git submodule**: Required uniformity across all downstream repositories and would disallow adding customized files in the submodule directory, making it more difficult to adapt across the entire documentation portfolio.
+* **Python package**: Required uniformity across all downstream repositories, pulls Sphinx Stack files out of the project (constituting a significant departure from the current recommended approach), and required a customized Makefile to interact with the Python package.
+* **Custom built solution**: Required increased development and maintenance, and the upgrade process would be more challenging to automate.
 
 ## Using Canonical Sphinx Stack as the foundation
 
