@@ -113,7 +113,7 @@ old_domain:
 
 new_domain:
   type: str
-  help: New docs domain path to redirect to (e.g., 'canonical.com/juju/docs/discourse-k8s-charm'). Leave empty to skip link rewriting.
+  help: New canonical.com domain path to redirect to (e.g., 'canonical.com/juju/docs/discourse-k8s-charm'). Leave empty to skip link rewriting.
   default: ""
 
 # ── LLM-friendly description ───────────────────────────────────

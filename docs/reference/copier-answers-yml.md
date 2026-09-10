@@ -55,4 +55,4 @@ repository's `.copier-answers.yml`.
 | `docs_host` | `str` | `"canonical.com"` | Domain where your docs are hosted. Choose `canonical.com` or `documentation.ubuntu.com`. Determines how `ogp_site_url` and `html_baseurl` are formatted. | `docs/conf.py` |
 | `rtd_slug` | `str` | `""` | Read the Docs project slug (needed if hosted on a Canonical RTD domain). Leave empty otherwise. | `docs/conf.py` |
 | `old_domain` | `str` | `""` | Old Read the Docs domain to redirect from (for example, `canonical-discourse-k8s-charm.readthedocs-hosted.com`). Leave empty to skip link rewriting. | `docs/_static/js/overwrite_links.js` |
-| `new_domain` | `str` | `""` | New docs domain path to redirect to (for example, `canonical.com/juju/docs/charm`). Leave empty to skip link rewriting. | `docs/_static/js/overwrite_links.js` |
+| `new_domain` | `str` | `""` | New canonical.com domain path to redirect to (for example, `canonical.com/juju/docs/charm`). Leave empty to skip link rewriting. | `docs/_static/js/overwrite_links.js` |
