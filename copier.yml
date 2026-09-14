@@ -3,9 +3,9 @@ _min_copier_version: "9.0"
 _exclude:
   - ".sphinx-stack-version"
 _skip_if_exists: # do not overwrite the file, but include for new projects
-  - "redirects.txt" 
-  - "_templates/header.html" 
-  - "_static/js/overwrite_links.js"
+  - "docs/redirects.txt" 
+  - "docs/_templates/header.html" 
+  - "docs/_static/js/overwrite_links.js"
 
 # ── Core identity ──────────────────────────────────────────────
 project:
@@ -103,7 +103,7 @@ docs_host:
 
 rtd_slug:
   type: str
-  help: Read the Docs project slug (only needed if hosted on documentation.ubuntu.com). Leave empty otherwise.
+  help: Read the Docs project slug (needed if hosted on documentation.ubuntu.com or canonical.com). Leave empty otherwise.
   default: ""
 
 old_domain:

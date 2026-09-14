@@ -38,7 +38,7 @@ html_title = project + " documentation"
 # Documentation website URL
 {% if rtd_slug and docs_host == "canonical.com" %}
 ogp_site_url = f"https://canonical.com/{{ rtd_slug }}/{version}/"
-{% elif rtd_slug %}
+{% else %}
 ogp_site_url = os.environ.get("READTHEDOCS_CANONICAL_URL", "/")
 {% endif %}
 
