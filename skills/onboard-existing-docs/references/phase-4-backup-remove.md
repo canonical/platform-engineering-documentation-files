@@ -35,8 +35,17 @@ Using the `overlapping_files` list from Phase 1, remove only those files:
 
 ```bash
 rm -rf docs/conf.py docs/Makefile docs/requirements.txt \
-       docs/.gitignore docs/_dev docs/_templates \
+       docs/.gitignore docs/_dev docs/.sphinx docs/_templates \
        docs/release-notes/template .readthedocs.yaml
+```
+
+### Step 2a: Remove stale build artifacts
+
+If `docs/_build/` exists, remove it to prevent stale build output from
+confusing the post-onboarding build:
+
+```bash
+rm -rf docs/_build
 ```
 
 ### Step 3: Verify content files are still present

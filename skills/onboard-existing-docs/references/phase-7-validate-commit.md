@@ -44,7 +44,22 @@ make vale        # Check style guide compliance
 make lint-md     # Check Markdown formatting
 ```
 
-### Step 5: Commit
+### Step 5: Update `.licenserc.yaml` (if present)
+
+If the downstream repo has a `.licenserc.yaml` file that checks license headers,
+add `.copier-answers.yml` to its `paths-ignore` list. The file is auto-generated
+by Copier and should not be checked for license headers.
+
+Check if `.licenserc.yaml` exists:
+
+```bash
+ls .licenserc.yaml 2>/dev/null && echo "Found .licenserc.yaml" || echo "No .licenserc.yaml"
+```
+
+If it exists, add `.copier-answers.yml` to the `paths-ignore` list. The entry
+should be placed alongside other generated/config files that are already ignored.
+
+### Step 6: Commit
 
 Once the build succeeds, instruct the user to commit:
 

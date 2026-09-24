@@ -42,6 +42,8 @@ covered by the template's Copier variables.
 | `extensions = [...]` | Uncomment `extensions` in the Configuration extras section |
 | `intersphinx_mapping = {...}` | Uncomment `intersphinx_mapping` in the Configuration extras section |
 | `rst_prolog = "..."` | Uncomment `rst_prolog` in the Configuration extras section |
+| `rst_epilog = "..."` | Add `rst_epilog` after `rst_prolog` in the Configuration extras section |
+| `source_suffix = {...}` | Add `source_suffix` in the Configuration extras section |
 | `exclude_patterns = [...]` | Uncomment `exclude_patterns` in the Configuration extras section |
 | `html_css_files = [...]` | Uncomment `html_css_files` in the Configuration extras section |
 | `html_js_files = [...]` | Uncomment `html_js_files` in the Configuration extras section |

@@ -33,6 +33,8 @@ Tell the user the following key points:
    rm -rf /tmp/docs-backup/
    ```
 
+5. **`.licenserc.yaml` update** — If the repo had a `.licenserc.yaml`, `.copier-answers.yml` was added to its `paths-ignore` list during Phase 7. Verify this was done correctly.
+
 ### Step 2: Set up Read the Docs (if applicable)
 
 If the project uses Read the Docs, remind the user to configure their project on Read the Docs to build from the repository. The generated `.readthedocs.yaml` is already configured.

@@ -41,6 +41,30 @@ The template generates these files in the downstream repo:
 | `.readthedocs.yaml` | `.readthedocs.yaml` |
 | `{{ _copier_conf.answers_file }}.jinja` | `.copier-answers.yml` |
 
+Additionally, older downstream repos may have a **legacy `.sphinx/` directory**
+from the pre-template starter pack. The template replaces this with `docs/_dev/`,
+so `.sphinx/` is also an overlapping file. Check for it:
+
+```bash
+ls -d docs/.sphinx/ 2>/dev/null && echo "Found legacy .sphinx/ directory" || echo "No legacy .sphinx/ directory"
+```
+
+If `docs/.sphinx/` exists, add it to `overlapping_files` — it will be removed in Phase 4.
+
+#### Files skipped by `_skip_if_exists`
+
+The template's `copier.yml` defines `_skip_if_exists` for certain files. These
+will **not** be overwritten by Copier even if they exist downstream:
+
+| File | Behaviour |
+|---|---|
+| `docs/redirects.txt` | Skipped if it already exists |
+| `docs/_templates/header.html` | Skipped if it already exists |
+| `docs/_static/js/overwrite_links.js` | Skipped if it already exists |
+
+Do **not** add these to `overlapping_files`. Flag them in the audit report as
+"preserved — skipped by `_skip_if_exists`."
+
 ### Step 3: Identify overlapping files
 
 For each file in the template's output list, check if it exists in the downstream repo. Build a list of overlapping files.
