@@ -34,6 +34,8 @@ Present the extracted values and ask the user to confirm or correct each one.
 | `product_tag` | `{value}` | Product tag image path |
 | `display_contributors` | `{value}` | Show contributors on each page |
 | `rtd_slug` | `{value}` | Read the Docs project slug |
+| `old_domain` | `{value}` | Old RTD domain to redirect from |
+| `new_domain` | `{value}` | New canonical.com domain path |
 
 > Are these values correct? Would you like to change any of them?
 

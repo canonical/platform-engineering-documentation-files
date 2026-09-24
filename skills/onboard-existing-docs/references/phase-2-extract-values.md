@@ -26,6 +26,24 @@ This outputs a JSON object with two keys:
 
 If the script cannot be run (e.g., the downstream repo doesn't have Python available), proceed with manual extraction in Step 2.
 
+### Step 1a: Extract domain redirect values from `overwrite_links.js`
+
+If `docs/_static/js/overwrite_links.js` exists, extract the `oldDomain` and
+`newDomain` constants. These map to Copier's `old_domain` and `new_domain`
+variables, which live in the `.js` file rather than `conf.py`:
+
+```bash
+grep -oP "const oldDomain = '\\K[^']+" docs/_static/js/overwrite_links.js 2>/dev/null || echo ""
+grep -oP "const newDomain = '\\K[^']+" docs/_static/js/overwrite_links.js 2>/dev/null || echo ""
+```
+
+Map the results to `extracted_values`:
+- `old_domain` — the extracted `oldDomain` value (empty string if not found)
+- `new_domain` — the extracted `newDomain` value (empty string if not found)
+
+If the file doesn't exist or the grep returns empty, leave both as empty
+strings (the Copier defaults).
+
 ### Step 2: Manual extraction (fallback)
 
 If the script is unavailable, manually read `docs/conf.py` and extract each value. Map to the corresponding Copier question variable:
@@ -46,6 +64,8 @@ If the script is unavailable, manually read `docs/conf.py` and extract each valu
 | `html_context["repo_default_branch"]` | `repo_default_branch` | |
 | `html_context["repo_folder"]` | `repo_folder` | |
 | `html_context["display_contributors"]` | `display_contributors` | Boolean |
+| `overwrite_links.js`: `const oldDomain = '...'` | `old_domain` | Old RTD domain to redirect from |
+| `overwrite_links.js`: `const newDomain = '...'` | `new_domain` | New canonical.com domain path |
 
 ### Step 3: Identify values NOT covered by the template
 

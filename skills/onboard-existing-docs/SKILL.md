@@ -13,7 +13,7 @@ license: Apache-2.0
 metadata:
   author: Canonical/platform-engineering
   summary: Onboard a downstream repo with pre-existing documentation tooling into the Copier-based central management solution
-  version: "1.1.0"
+  version: "1.1.1"
   tags:
     - canonical
     - platform-engineering
