@@ -11,6 +11,24 @@ description: "Phase 1 of the onboard-existing-docs skill. Audits the downstream 
 
 ## Instructions
 
+### Step 0: Ensure you're on a feature branch
+
+Check the current branch. If you're on `main`, create a new feature branch
+before making any changes:
+
+```bash
+CURRENT_BRANCH=$(git branch --show-current)
+if [ "$CURRENT_BRANCH" = "main" ]; then
+  git checkout -b docs/onboard-copier-management
+  echo "Created branch docs/onboard-copier-management"
+else
+  echo "Already on branch: $CURRENT_BRANCH"
+fi
+```
+
+All onboarding work should happen on a feature branch. The PR will be opened
+from this branch against `main`.
+
 ### Step 1: List the downstream `docs/` directory
 
 Run the following to inventory the downstream repo's documentation directory:

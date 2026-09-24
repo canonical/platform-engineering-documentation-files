@@ -35,15 +35,52 @@ Tell the user the following key points:
 
 5. **`.licenserc.yaml` update** — If the repo had a `.licenserc.yaml`, `.copier-answers.yml` was added to its `paths-ignore` list during Phase 7. Verify this was done correctly.
 
-### Step 2: Set up Read the Docs (if applicable)
+### Step 2: Offer to set up automated Copier updates
+
+Offer to create a GitHub Actions workflow that automatically checks for template
+updates and opens PRs. This keeps the downstream repo in sync with the central
+management solution without manual intervention.
+
+Ask the user: "Would you like me to create a GitHub Actions workflow that
+automatically runs `copier update` on a schedule and opens PRs when the template
+changes?"
+
+If the user agrees, create `.github/workflows/sync_docs_template.yml` with the
+following content:
+
+```yaml
+name: Sync with platform-engineering-documentation-files
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Every Monday at 6 AM UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    uses: canonical/platform-engineering-documentation-files/.github/workflows/copier-update.yml@main
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+The workflow checks if the template repository has new commits since the last
+update, runs `copier update` if there are changes, and opens a PR with the diff.
+If `copier update` produces merge conflicts, they are left inline for the user
+to review and resolve before merging.
+
+### Step 3: Set up Read the Docs (if applicable)
 
 If the project uses Read the Docs, remind the user to configure their project on Read the Docs to build from the repository. The generated `.readthedocs.yaml` is already configured.
 
-### Step 3: Offer PR description guidance
+### Step 4: Offer PR description guidance
 
 Read [`PR-GUIDE.md`](../assets/PR-GUIDE.md) and offer to structure the PR description using the reviewer priority tiers and human action checklist.
 
-### Step 4: Confirm completion
+### Step 5: Confirm completion
 
 Ask the user: "Is the onboarding complete and working as expected? Do you need any adjustments?"
 
