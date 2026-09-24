@@ -49,7 +49,7 @@ template and should not deviate from upstream. Wrap them in a collapsed
 
 - `docs/_dev/*` — Developer tooling (vale, pa11y, pre-commit, pymarkdown, sphinx-stack updater)
 - `docs/_templates/*` — HTML header and footer templates
-- `docs/release-notes/template/*` — Release note artifact templates
+- `docs/release-notes/template/*` — Release note artifact templates (only if the repo has release notes; omit this line for repos without them)
 </details>
 ```
 

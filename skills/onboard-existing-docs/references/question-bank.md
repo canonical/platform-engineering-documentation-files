@@ -13,10 +13,13 @@ phase and step.
 
 ## Confirm Extracted Values (Phase 2, Step 5)
 
-Present the extracted values and ask the user to confirm or correct each one.
+Present the extracted values in two groups: core identity first, then branding
+and optional values.
 
-> I've extracted the following values from your existing `docs/conf.py`.
-> Please confirm or correct each one:
+### Core identity
+
+> I've extracted the following core identity values from your existing
+> `docs/conf.py`. Please confirm or correct each one:
 
 | Copier variable | Extracted value | Description |
 |---|---|---|
@@ -29,6 +32,15 @@ Present the extracted values and ask the user to confirm or correct each one.
 | `github_url` | `{value}` | GitHub repository URL |
 | `repo_default_branch` | `{value}` | Default branch name |
 | `repo_folder` | `{value}` | Path to docs folder in repo |
+
+> Are these core identity values correct?
+
+### Branding and optional values
+
+> Now the branding and optional values:
+
+| Copier variable | Extracted value | Description |
+|---|---|---|
 | `ogp_image` | `{value}` | Open Graph preview image |
 | `html_favicon` | `{value}` | Custom favicon path |
 | `product_tag` | `{value}` | Product tag image path |
@@ -37,7 +49,7 @@ Present the extracted values and ask the user to confirm or correct each one.
 | `old_domain` | `{value}` | Old RTD domain to redirect from |
 | `new_domain` | `{value}` | New canonical.com domain path |
 
-> Are these values correct? Would you like to change any of them?
+> Are these branding and optional values correct? Would you like to change any?
 
 ---
 

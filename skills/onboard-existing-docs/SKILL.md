@@ -13,7 +13,7 @@ license: Apache-2.0
 metadata:
   author: Canonical/platform-engineering
   summary: Onboard a downstream repo with pre-existing documentation tooling into the Copier-based central management solution
-  version: "1.1.1"
+  version: "1.2.0"
   tags:
     - canonical
     - platform-engineering
@@ -108,3 +108,29 @@ description, including:
 - Always test the build (`make html`) before considering the onboarding
   complete.
 - Never edit `.copier-answers.yml` manually after generation.
+
+## Batch Onboarding (Multiple Repositories)
+
+When onboarding two or more repositories simultaneously:
+
+1. **Pre-flight comparison**: Before starting Phase 1, build a comparison
+   matrix of each repo's profile:
+   - Starter pack generation (new `_dev/` vs legacy `.sphinx/`)
+   - Content format (`.md` vs `.rst`)
+   - Redirect mechanism (`rediraffe_redirects` vs `sphinx_reredirects`)
+   - Extra dependencies beyond the template
+
+2. **Execution order**: Process repos **sequentially** (complete all 8 phases
+   for repo A before starting repo B). This keeps per-repo state tracking
+   simple and avoids cross-contamination.
+
+3. **Per-repo backup paths**: Use unique backup paths for each repo (e.g.,
+   `/tmp/docs-backup-<repo-name>/`) to avoid overwriting backups.
+
+4. **Batch confirmations**: When repos share similar profiles, present Phase 2
+   extracted values for all repos at once to reduce confirmation rounds. For
+   repos with different profiles, confirm separately.
+
+5. **Legacy `.sphinx/` awareness**: Repos with legacy `.sphinx/` layouts
+   require extra handling in Phases 2, 3, 4, 6, and 7. See individual phase
+   files for legacy-specific steps.

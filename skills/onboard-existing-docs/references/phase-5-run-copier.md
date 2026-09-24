@@ -62,6 +62,24 @@ ls docs/release-notes/template/
 ls .readthedocs.yaml .copier-answers.yml
 ```
 
+### Step 4a: Verify `_skip_if_exists` files were preserved
+
+Copier's `_skip_if_exists` mechanism protects three files from being overwritten:
+`docs/_static/js/overwrite_links.js`, `docs/_templates/header.html`, and
+`docs/redirects.txt`. Verify they're intact after Copier runs:
+
+```bash
+git diff --stat docs/_static/js/overwrite_links.js docs/_templates/header.html docs/redirects.txt 2>/dev/null
+```
+
+If any of these files show as "modified" or "deleted" in the diff, the
+`_skip_if_exists` mechanism didn't apply correctly. Restore them from the backup
+immediately:
+
+```bash
+cp /tmp/docs-backup/docs/<path-to-file> docs/<path-to-file>
+```
+
 ### Step 5: Verify `.copier-answers.yml`
 
 Read `.copier-answers.yml` and confirm it contains the correct values matching `extracted_values`. If any value is wrong, do not edit `.copier-answers.yml` manually — re-run `copier copy` with corrected `--data` flags.

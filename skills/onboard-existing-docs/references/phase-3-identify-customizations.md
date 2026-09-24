@@ -32,6 +32,7 @@ For each file, compare the downstream version against the template version:
 #### `docs/Makefile`
 - Identify any custom targets not present in the template
 - Note any modified variable defaults (e.g., `SPHINX_PORT`, `DOCS_VENVDIR`)
+- **Legacy `.sphinx/` layout:** If the downstream Makefile uses legacy variable naming (e.g., `SPHINXDIR`, `VENVDIR`, `SOURCEDIR` instead of the template's `DEV_DIR`, `DOCS_VENVDIR`), the template-generated Makefile is a complete rewrite. Confirm with the user: no custom targets will be carried forward — the new template Makefile supersedes the legacy one entirely.
 
 #### `docs/requirements.txt`
 - Identify any extra Python dependencies not in the template

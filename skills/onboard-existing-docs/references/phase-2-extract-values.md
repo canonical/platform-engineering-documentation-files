@@ -28,20 +28,25 @@ If the script cannot be run (e.g., the downstream repo doesn't have Python avail
 
 ### Step 1a: Extract domain redirect values from `overwrite_links.js`
 
-If `docs/_static/js/overwrite_links.js` exists, extract the `oldDomain` and
-`newDomain` constants. These map to Copier's `old_domain` and `new_domain`
-variables, which live in the `.js` file rather than `conf.py`:
+`overwrite_links.js` may live in either the new `_dev/` layout or the legacy
+`.sphinx/` layout. Check both locations:
 
 ```bash
-grep -oP "const oldDomain = '\\K[^']+" docs/_static/js/overwrite_links.js 2>/dev/null || echo ""
-grep -oP "const newDomain = '\\K[^']+" docs/_static/js/overwrite_links.js 2>/dev/null || echo ""
+# Check new layout first, then legacy
+for path in docs/_static/js/overwrite_links.js docs/.sphinx/_static/js/overwrite_links.js; do
+  if test -f "$path"; then
+    grep -oP "const oldDomain = '\\K[^']+" "$path" 2>/dev/null || echo ""
+    grep -oP "const newDomain = '\\K[^']+" "$path" 2>/dev/null || echo ""
+    break
+  fi
+done
 ```
 
 Map the results to `extracted_values`:
 - `old_domain` — the extracted `oldDomain` value (empty string if not found)
 - `new_domain` — the extracted `newDomain` value (empty string if not found)
 
-If the file doesn't exist or the grep returns empty, leave both as empty
+If neither file exists or the grep returns empty, leave both as empty
 strings (the Copier defaults).
 
 ### Step 2: Manual extraction (fallback)
@@ -75,6 +80,10 @@ Common non-Copier config to look for:
 - Custom Sphinx `extensions = [...]` entries beyond what the template provides
 - `intersphinx_mapping` for cross-referencing external docs
 - `rst_prolog` with custom substitutions (e.g., `|charm|`)
+- `rst_epilog` with `.. include::` directives (e.g., `reuse/links.txt`)
+- `myst_substitutions` loaded from YAML (e.g., `reuse/substitutions.yaml`)
+- `redirects = {...}` (legacy `sphinx_reredirects` dict) — modernize to `rediraffe_redirects` in Phase 6
+- `discourse_prefix` workaround for canonical-sphinx issue #34
 - `exclude_patterns`, `html_css_files`, `html_js_files`
 - `html_static_path`, `templates_path`
 - `linkcheck_retries`, `linkcheck_timeout`

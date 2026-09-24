@@ -44,6 +44,26 @@ make vale        # Check style guide compliance
 make lint-md     # Check Markdown formatting
 ```
 
+### Step 4a: Verify `.readthedocs.yaml` build settings
+
+The template generates `.readthedocs.yaml` with default build settings
+(`ubuntu-22.04` / Python 3.11). Some downstream repos may use a newer OS
+or Python version. Compare the generated file against the backup:
+
+```bash
+echo "Generated:" && grep -A2 'build:' .readthedocs.yaml | head -3
+echo "Original:" && grep -A2 'build:' /tmp/docs-backup/.readthedocs.yaml | head -3
+```
+
+If the downstream used a newer version (e.g., `ubuntu-24.04` / Python 3.13
+instead of the template's `ubuntu-22.04` / Python 3.11), ask the user:
+
+> "The generated `.readthedocs.yaml` uses {template values}. The original
+> used {downstream values}. Restore the downstream's version?"
+
+If the user confirms, override the `build:` section of the generated
+`.readthedocs.yaml` with the values from the backup.
+
 ### Step 5: Update `.licenserc.yaml` (if present)
 
 If the downstream repo has a `.licenserc.yaml` file that checks license headers,
@@ -71,7 +91,14 @@ Check if `renovate.json` exists:
 ls renovate.json 2>/dev/null && echo "Found renovate.json" || echo "No renovate.json"
 ```
 
-If `renovate.json` exists, handle each case:
+If `renovate.json` exists, first determine which case applies by checking the
+current state of `ignorePaths`:
+
+```bash
+python3 -c "import json; d=json.load(open('renovate.json')); print(d.get('ignorePaths', 'KEY_NOT_FOUND'))"
+```
+
+Then handle each case:
 
 #### Case 1: `ignorePaths` does not exist
 Add it with `docs/**`:

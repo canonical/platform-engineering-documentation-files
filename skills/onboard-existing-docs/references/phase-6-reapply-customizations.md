@@ -43,10 +43,13 @@ covered by the template's Copier variables.
 | `intersphinx_mapping = {...}` | Uncomment `intersphinx_mapping` in the Configuration extras section |
 | `rst_prolog = "..."` | Uncomment `rst_prolog` in the Configuration extras section |
 | `rst_epilog = "..."` | Add `rst_epilog` after `rst_prolog` in the Configuration extras section |
+| `myst_substitutions` (from YAML) | Add `import yaml` to the top of `conf.py`; add the YAML loading block after `html_context` |
+| `discourse_prefix` workaround | Add the workaround block after `html_context` (see example below) |
+| `redirects = {...}` (legacy) | Convert to `rediraffe_redirects` format in `redirects.txt`. Format: `<old-path> <new-path>` one per line. See example below. |
 | `source_suffix = {...}` | Add `source_suffix` in the Configuration extras section |
 | `exclude_patterns = [...]` | Uncomment `exclude_patterns` in the Configuration extras section |
-| `html_css_files = [...]` | Uncomment `html_css_files` in the Configuration extras section |
-| `html_js_files = [...]` | Uncomment `html_js_files` in the Configuration extras section |
+| `html_css_files = [...]` | **Do not re-apply local paths.** The template provides remote URLs (e.g., `https://assets.ubuntu.com/v1/...`). Only re-apply entries that are custom additions NOT covered by the template defaults. |
+| `html_js_files = [...]` | **Do not re-apply local paths.** The template provides remote URLs. Only re-apply entries that are custom additions NOT covered by the template defaults. |
 | Extra `html_context` keys | Add to the `html_context` dict (after the license block) |
 | Custom `html_theme_options` | Merge into the existing `html_theme_options` dict (or add if absent) |
 
@@ -89,6 +92,63 @@ intersphinx_mapping = {
 - **`version` variable**: The template removes this. Only re-add it if the
   downstream project uses `version` for purposes beyond `ogp_site_url` /
   `html_baseurl`.
+- **`html_css_files` / `html_js_files` with local paths**: The central
+  management solution uses remote URLs for CSS and JS assets (e.g.,
+  `https://assets.ubuntu.com/v1/...`). When migrating from the legacy
+  `.sphinx/` layout, the old local paths (e.g., `css/pdf.css`,
+  `cookie-banner.css`, `js/bundle.js`) are replaced by the template's
+  remote equivalents. Do **not** carry forward the downstream's local
+  paths for these — the template already includes them. Only preserve
+  custom CSS/JS entries that are unique to the downstream project and
+  are not provided by the template.
+
+#### Additional examples: legacy `.sphinx/` migration
+
+**Legacy `redirects` dict → `rediraffe_redirects`:**
+
+If the downstream `conf.py` used `sphinx_reredirects` with a `redirects` dict:
+
+```python
+redirects = {
+    'explanation/old-name': '/reference/new-name',
+    'how-to/old-guide': '/how-to/new-guide',
+}
+```
+
+Convert to `rediraffe_redirects` format in `redirects.txt` (one `<old-path> <new-path>` per line):
+
+```
+explanation/old-name reference/new-name
+how-to/old-guide how-to/new-guide
+```
+
+**`rst_epilog` with `reuse/` includes:**
+
+```python
+rst_epilog = """
+.. include:: /reuse/links.txt
+.. include:: /reuse/substitutions.txt
+"""
+```
+
+**`myst_substitutions` from YAML:**
+
+Add `import yaml` to the top of `conf.py`, then add after `html_context`:
+
+```python
+if os.path.exists('./reuse/substitutions.yaml'):
+    with open('./reuse/substitutions.yaml', 'r') as fd:
+        myst_substitutions = yaml.safe_load(fd.read())
+```
+
+**`discourse_prefix` workaround:**
+
+Add after `html_context` (before the Configuration extras section):
+
+```python
+if "discourse_prefix" not in html_context and "discourse" in html_context:
+    html_context["discourse_prefix"] = html_context["discourse"] + "/t/"
+```
 
 ### Step 3: Re-apply `Makefile` customizations
 
