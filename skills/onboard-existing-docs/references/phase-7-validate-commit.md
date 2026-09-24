@@ -59,6 +59,54 @@ ls .licenserc.yaml 2>/dev/null && echo "Found .licenserc.yaml" || echo "No .lice
 If it exists, add `.copier-answers.yml` to the `paths-ignore` list. The entry
 should be placed alongside other generated/config files that are already ignored.
 
+### Step 5a: Add `docs/**` to Renovate `ignorePaths` (if Renovate is used)
+
+If the downstream repo uses Renovate to manage dependency updates, the `docs/`
+folder must be added to `"ignorePaths"` in `renovate.json` so Renovate does not
+open PRs against Copier-managed documentation tooling files.
+
+Check if `renovate.json` exists:
+
+```bash
+ls renovate.json 2>/dev/null && echo "Found renovate.json" || echo "No renovate.json"
+```
+
+If `renovate.json` exists, handle each case:
+
+#### Case 1: `ignorePaths` does not exist
+Add it with `docs/**`:
+
+```bash
+python3 -c "
+import json
+with open('renovate.json') as f:
+    data = json.load(f)
+data['ignorePaths'] = ['docs/**']
+with open('renovate.json', 'w') as f:
+    json.dump(data, f, indent=2)
+    f.write('\n')
+"
+```
+
+#### Case 2: `ignorePaths` exists but does not contain `docs/**`
+Append `docs/**` to the existing array:
+
+```bash
+python3 -c "
+import json
+with open('renovate.json') as f:
+    data = json.load(f)
+if 'docs/**' not in data.get('ignorePaths', []):
+    data['ignorePaths'].append('docs/**')
+with open('renovate.json', 'w') as f:
+    json.dump(data, f, indent=2)
+    f.write('\n')
+"
+```
+
+#### Case 3: `docs/**` is already in `ignorePaths`
+No action needed. Report: "`docs/**` already in Renovate ignorePaths. Skipping."
+
 ### Step 6: Commit
 
 Once the build succeeds, instruct the user to commit:

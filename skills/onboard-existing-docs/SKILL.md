@@ -63,7 +63,7 @@ using `read_file` to load the sub-skill instructions.
 | 4 | [`phase-4-backup-remove.md`](references/phase-4-backup-remove.md) | Back up and remove overlapping tooling files |
 | 5 | [`phase-5-run-copier.md`](references/phase-5-run-copier.md) | Run Copier with confirmed values |
 | 6 | [`phase-6-reapply-customizations.md`](references/phase-6-reapply-customizations.md) | Re-apply downstream customizations via diff |
-| 7 | [`phase-7-validate-commit.md`](references/phase-7-validate-commit.md) | Validate build, diagnose failures, commit |
+| 7 | [`phase-7-validate-commit.md`](references/phase-7-validate-commit.md) | Validate build, update `.licenserc.yaml` and `renovate.json`, commit |
 | 8 | [`phase-8-post-onboarding.md`](references/phase-8-post-onboarding.md) | Post-onboarding guidance and cleanup |
 
 ### Hand-off between phases
