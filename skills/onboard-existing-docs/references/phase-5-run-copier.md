@@ -40,13 +40,21 @@ copier copy --defaults --overwrite \
   --data "author=Canonical Ltd." \
   --data "product_page=charmhub.io/my-charm" \
   --data "discourse=https://discourse.charmhub.io" \
+  --data "matrix=https://matrix.to/#/#my-channel:ubuntu.com" \
   --data "github_url=https://github.com/canonical/my-repo" \
-  --data "repo_default_branch=main" \
-  --data "repo_folder=/docs/" \
+  --data "source_edit_link=https://github.com/canonical/my-repo" \
+  --data "docs_host=canonical.com" \
+  --data "rtd_slug=juju/docs/my-charm" \
+  --data "old_domain=canonical-my-charm.readthedocs-hosted.com" \
+  --data "new_domain=canonical.com/juju/docs/my-charm" \
   --data "display_contributors=False" \
-  ... \
   gh:canonical/platform-engineering-documentation-files.git .
 ```
+
+The example above shows the full set typically needed for a legacy Juju charm
+repo. Include a `--data` flag for every value that differs from the template
+default (in practice this almost always includes `source_edit_link`, `rtd_slug`,
+`docs_host`, `old_domain`, and `new_domain`, which the shorter examples omit).
 
 Only include `--data` flags for non-default values. Omit flags for variables where the default is acceptable.
 
@@ -92,3 +100,4 @@ Carry forward:
 - `template_uncovered_values` — from Phase 2
 - `downstream_customizations` — from Phase 3
 - `content_files` — from Phase 1
+- `release_notes_overrides` — from Phase 1

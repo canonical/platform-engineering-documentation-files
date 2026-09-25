@@ -13,7 +13,7 @@ license: Apache-2.0
 metadata:
   author: Canonical/platform-engineering
   summary: Onboard a downstream repo with pre-existing documentation tooling into the Copier-based central management solution
-  version: "1.2.1"
+  version: "1.3.0"
   tags:
     - canonical
     - platform-engineering
@@ -75,6 +75,7 @@ values forward:
 |---|---|---|---|
 | `overlapping_files` | Phase 1 | Phases 2, 3, 4 | List of files that overlap with the template |
 | `content_files` | Phase 1 | Phases 3, 4, 6 | List of documentation content files to preserve |
+| `release_notes_overrides` | Phase 1 | Phases 4, 6 | Customized or format-mismatched release-notes templates to preserve/restore |
 | `extracted_values` | Phase 2 | Phases 3, 4, 5, 6, 7, 8 | Dict of Copier variable → confirmed value |
 | `template_uncovered_values` | Phase 2 | Phases 3, 6 | Custom config not covered by the template |
 | `downstream_customizations` | Phase 3 | Phases 4, 6 | Structured list of customizations to re-apply |

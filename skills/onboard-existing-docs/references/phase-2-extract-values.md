@@ -100,7 +100,22 @@ These will be re-applied in Phase 6.
 
 ### Step 4: Extract RTD slug (if applicable)
 
-If the downstream repo has a `.readthedocs.yaml`, read it and extract the RTD project slug for the `rtd_slug` Copier variable.
+Extract the `rtd_slug` Copier variable. **`rtd_slug` is the URL path segment used
+to build the canonical docs URL, not necessarily the Read the Docs project slug.**
+The template renders it as `https://canonical.com/{{ rtd_slug }}/{version}/`, so it
+must match the path in the existing `html_baseurl` / `ogp_site_url`, not the RTD
+dashboard project name.
+
+To find the right value, check these sources in order:
+
+- The existing `conf.py` `slug = "..."` value, or the path in
+  `ogp_site_url` / `html_baseurl` (e.g. `https://canonical.com/juju/docs/haproxy-charm/...`
+  → `rtd_slug = "juju/docs/haproxy-charm"`).
+- The `new_domain` from `overwrite_links.js` (the path after the host).
+
+The RTD *project* slug (e.g. `canonical-haproxy-juju-charm`, often visible in
+`old_domain`) is usually **not** the correct value — do not use it unless it
+matches the canonical URL path.
 
 ### Step 5: Confirm values with the user
 

@@ -122,6 +122,15 @@ explanation/old-name reference/new-name
 how-to/old-guide how-to/new-guide
 ```
 
+> **Validate every redirect target before writing it.** Unlike
+> `sphinx_reredirects`, rediraffe requires the destination to be an existing
+> source file and fails the build — which runs with `--fail-on-warning`. Legacy
+> starter-pack configs often carry dead redirects pointing at pages that don't
+> exist in this repo (e.g. `myst-syntax-reference`, `rst-syntax-reference`).
+> For each entry, confirm the source path is absent and the target file exists;
+> **drop dead redirects** and flag the dropped entries in the PR description so a
+> human can confirm no external inbound links relied on them.
+
 **`rst_epilog` with `reuse/` includes:**
 
 ```python
@@ -171,6 +180,33 @@ Using `downstream_customizations.gitignore_patterns` from Phase 3, merge any cus
 # Downstream-specific ignores
 my-custom-pattern/
 ```
+
+### Step 5a: Restore customized release-notes templates
+
+If `release_notes_overrides` (from Phase 1) is non-empty, reconcile the
+`docs/release-notes/template/` directory:
+
+1. **Restore customized artifact templates** from the backup so Copier's
+   generated versions don't clobber downstream changes:
+
+   ```bash
+   cp /tmp/docs-backup/docs/release-notes/template/<file>.yaml \
+      docs/release-notes/template/<file>.yaml
+   ```
+
+2. **Remove the format-mismatched generated file.** For a markdown workflow,
+   Copier generates `release-template.rst.j2` next to the preserved
+   `release-template.md.j2`; delete the generated `.rst.j2`:
+
+   ```bash
+   rm -f docs/release-notes/template/release-template.rst.j2
+   ```
+
+3. Verify the directory now contains only the intended templates:
+
+   ```bash
+   ls docs/release-notes/template/
+   ```
 
 ### Step 6: Verify no content files were affected
 

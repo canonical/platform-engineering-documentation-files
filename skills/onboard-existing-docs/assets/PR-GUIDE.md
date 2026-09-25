@@ -34,7 +34,7 @@ These files follow predictable patterns but affect build behavior:
 | `docs/requirements.txt` | Standard dependencies from the template. Verify no conflicts with re-applied extras. |
 | `docs/.gitignore` | Merged ignore patterns. Verify downstream-specific patterns were preserved. |
 | `.readthedocs.yaml` | RTD build configuration. Verify the Python version and build settings are correct for the project. |
-| `renovate.json` | Added `"docs/**"` to `"ignorePaths"` to prevent Renovate from managing template-owned documentation files. |
+| `renovate.json` | Added a disabled `packageRules` entry matching `"docs/**"` to prevent Renovate from opening PRs against template-owned documentation files. |
 
 ## Low priority — copied from the template
 

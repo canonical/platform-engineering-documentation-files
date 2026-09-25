@@ -79,11 +79,24 @@ ls .licenserc.yaml 2>/dev/null && echo "Found .licenserc.yaml" || echo "No .lice
 If it exists, add `.copier-answers.yml` to the `paths-ignore` list. The entry
 should be placed alongside other generated/config files that are already ignored.
 
-### Step 5a: Add `docs/**` to Renovate `ignorePaths` (if Renovate is used)
+### Step 5a: Disable Renovate updates for `docs/**` via `packageRules` (if Renovate is used)
 
-If the downstream repo uses Renovate to manage dependency updates, the `docs/`
-folder must be added to `"ignorePaths"` in `renovate.json` so Renovate does not
-open PRs against Copier-managed documentation tooling files.
+If the downstream repo uses Renovate to manage dependency updates, add a
+`packageRules` entry that disables updates for the `docs/` folder so Renovate
+does not open PRs against Copier-managed documentation tooling files.
+
+**Use `packageRules`, not `ignorePaths`.** A disabled `packageRules` entry keeps
+the docs files visible to Renovate but suppresses update PRs, which is more
+explicit and composes cleanly with the other rules most repos already express as
+`packageRules`. `ignorePaths` instead stops Renovate from extracting those files
+at all, which is a broader, less discoverable behaviour. The target entry is:
+
+```json
+{
+  "enabled": false,
+  "matchFileNames": ["docs/**"]
+}
+```
 
 Check if `renovate.json` exists:
 
@@ -91,48 +104,46 @@ Check if `renovate.json` exists:
 ls renovate.json 2>/dev/null && echo "Found renovate.json" || echo "No renovate.json"
 ```
 
-If `renovate.json` exists, first determine which case applies by checking the
-current state of `ignorePaths`:
+If `renovate.json` exists, check whether a rule already disables updates for
+`docs/**`:
 
 ```bash
-python3 -c "import json; d=json.load(open('renovate.json')); print(d.get('ignorePaths', 'KEY_NOT_FOUND'))"
+python3 -c "
+import json
+data = json.load(open('renovate.json'))
+rules = data.get('packageRules', [])
+present = any(
+    r.get('enabled') is False and 'docs/**' in r.get('matchFileNames', [])
+    for r in rules
+)
+print('PRESENT' if present else 'MISSING')
+"
 ```
 
 Then handle each case:
 
-#### Case 1: `ignorePaths` does not exist
-Add it with `docs/**`:
+#### Case 1: no matching rule exists
+Prepend the disable rule to `packageRules` (creating the array if absent):
 
 ```bash
 python3 -c "
 import json
 with open('renovate.json') as f:
     data = json.load(f)
-data['ignorePaths'] = ['docs/**']
+rule = {'enabled': False, 'matchFileNames': ['docs/**']}
+data.setdefault('packageRules', []).insert(0, rule)
 with open('renovate.json', 'w') as f:
     json.dump(data, f, indent=2)
     f.write('\n')
 "
 ```
 
-#### Case 2: `ignorePaths` exists but does not contain `docs/**`
-Append `docs/**` to the existing array:
+#### Case 2: a matching rule already exists
+No action needed. Report: "`docs/**` already disabled in Renovate packageRules. Skipping."
 
-```bash
-python3 -c "
-import json
-with open('renovate.json') as f:
-    data = json.load(f)
-if 'docs/**' not in data.get('ignorePaths', []):
-    data['ignorePaths'].append('docs/**')
-with open('renovate.json', 'w') as f:
-    json.dump(data, f, indent=2)
-    f.write('\n')
-"
-```
-
-#### Case 3: `docs/**` is already in `ignorePaths`
-No action needed. Report: "`docs/**` already in Renovate ignorePaths. Skipping."
+> **Note:** If the repo already had `docs/**` in `ignorePaths` from a previous
+> onboarding, remove it when adding the `packageRules` entry so the two
+> mechanisms don't overlap.
 
 ### Step 6: Commit
 

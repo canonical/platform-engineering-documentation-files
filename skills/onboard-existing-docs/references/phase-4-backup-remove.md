@@ -55,6 +55,13 @@ If pre-placement isn't possible (e.g., the target path doesn't exist and can't b
 created), skip this step. Fall back to restoring these files from the backup in
 Phase 6.
 
+> **Layout note:** Not every legacy repo keeps these files under `.sphinx/`. Many
+> already have `overwrite_links.js` at `docs/_static/js/` and `header.html` at
+> `docs/_templates/` (the new paths). When that's the case, the `test -f
+> docs/.sphinx/...` checks above simply no-op and Copier's `_skip_if_exists`
+> preserves the in-place files automatically — nothing to pre-place. Only the
+> `.sphinx/`-nested variant needs this step.
+
 ### Step 2: Remove only the tooling files that overlap with the template
 
 **CRITICAL: Do NOT remove documentation content files** (`.md`, `.rst`, `_static/`, images, custom CSS, etc.).
@@ -64,8 +71,15 @@ Using the `overlapping_files` list from Phase 1, remove only those files:
 ```bash
 rm -rf docs/conf.py docs/Makefile docs/requirements.txt \
        docs/.gitignore docs/_dev docs/.sphinx docs/_templates \
-       docs/release-notes/template .readthedocs.yaml
+       .readthedocs.yaml
 ```
+
+**Do not remove `docs/release-notes/template/` when `release_notes_overrides`
+(from Phase 1) is non-empty.** Leaving it in place lets Copier's generated files
+land alongside the downstream ones so Phase 6 can restore the customized versions
+and delete the format-mismatched generated file (e.g. a `.rst.j2` generated next
+to a preserved `.md.j2`). Only include `docs/release-notes/template` in the `rm`
+above when the downstream templates are unmodified and match the template format.
 
 ### Step 2a: Remove stale build artifacts
 
@@ -102,3 +116,4 @@ Carry forward:
 - `template_uncovered_values` — from Phase 2
 - `downstream_customizations` — from Phase 3
 - `content_files` — from Phase 1
+- `release_notes_overrides` — from Phase 1
