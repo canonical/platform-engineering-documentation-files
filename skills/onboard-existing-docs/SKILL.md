@@ -13,7 +13,7 @@ license: Apache-2.0
 metadata:
   author: Canonical/platform-engineering
   summary: Onboard a downstream repo with pre-existing documentation tooling into the Copier-based central management solution
-  version: "1.3.0"
+  version: "1.3.1"
   tags:
     - canonical
     - platform-engineering
@@ -104,6 +104,9 @@ description, including:
 
 - Never delete documentation content files (`.md`, `.rst`, `_static/`,
   images). Only remove tooling/config files that overlap with the template.
+  The one exception is local CSS/JS assets that the template now serves via
+  remote URLs and that are no longer referenced anywhere (see Phase 6,
+  Step 2a) — e.g. `cookie-banner.css`, `bundle.js`.
 - Always back up before removing anything.
 - Always confirm extracted values with the user before running Copier.
 - Always test the build (`make html`) before considering the onboarding

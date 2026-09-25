@@ -100,7 +100,9 @@ intersphinx_mapping = {
   remote equivalents. Do **not** carry forward the downstream's local
   paths for these — the template already includes them. Only preserve
   custom CSS/JS entries that are unique to the downstream project and
-  are not provided by the template.
+  are not provided by the template. The local asset files left behind by
+  this replacement (e.g. `cookie-banner.css`, `bundle.js`) are now orphaned
+  and must be removed in **Step 2a** below.
 
 #### Additional examples: legacy `.sphinx/` migration
 
@@ -158,6 +160,34 @@ Add after `html_context` (before the Configuration extras section):
 if "discourse_prefix" not in html_context and "discourse" in html_context:
     html_context["discourse_prefix"] = html_context["discourse"] + "/t/"
 ```
+
+### Step 2a: Remove orphaned local CSS/JS assets
+
+When Step 2 replaced a downstream local `html_css_files` / `html_js_files` path
+with the template's remote URL, the corresponding local file under `docs/_static/`
+is now unreferenced and should be deleted so the repo doesn't keep dead assets.
+
+Using the original `html_css_files` / `html_js_files` values captured in Phase 2,
+for each **local** path that was replaced by a template-provided remote URL:
+
+1. Confirm the file is no longer referenced anywhere (exclude the build output):
+
+   ```bash
+   grep -rn "<filename>" docs --exclude-dir=_build
+   ```
+
+2. If the only remaining hits are the remote URLs in `conf.py` (or there are no
+   hits at all), delete the orphaned file:
+
+   ```bash
+   rm -f docs/_static/<path-to-asset>
+   ```
+
+**Keep any asset that is still referenced.** Files the template still points at
+locally — most commonly `docs/_static/js/overwrite_links.js` — as well as assets
+used by `header.html` / `footer.html` or by content pages must **not** be removed.
+Typical orphans to remove for a legacy `.sphinx/` migration are
+`docs/_static/cookie-banner.css` and `docs/_static/js/bundle.js`.
 
 ### Step 3: Re-apply `Makefile` customizations
 

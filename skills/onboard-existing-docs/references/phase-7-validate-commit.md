@@ -64,6 +64,20 @@ instead of the template's `ubuntu-22.04` / Python 3.11), ask the user:
 If the user confirms, override the `build:` section of the generated
 `.readthedocs.yaml` with the values from the backup.
 
+### Step 4b: Confirm no orphaned local assets remain
+
+Phase 6, Step 2a removes local CSS/JS files that the template now serves via
+remote URLs. Confirm none of the replaced assets are still present and
+unreferenced. For each local asset that was replaced (e.g. `cookie-banner.css`,
+`bundle.js`), check the source tree (excluding the build output):
+
+```bash
+grep -rn "cookie-banner\|bundle.js" docs --exclude-dir=_build
+```
+
+The only expected hits are the remote URLs in `docs/conf.py`. If a matching
+local file still exists under `docs/_static/` with no references, remove it.
+
 ### Step 5: Update `.licenserc.yaml` (if present)
 
 If the downstream repo has a `.licenserc.yaml` file that checks license headers,
