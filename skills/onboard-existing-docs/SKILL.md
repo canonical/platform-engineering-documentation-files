@@ -13,7 +13,7 @@ license: Apache-2.0
 metadata:
   author: Canonical/platform-engineering
   summary: Onboard a downstream repo with pre-existing documentation tooling into the Copier-based central management solution
-  version: "1.4.0"
+  version: "1.5.0"
   tags:
     - canonical
     - platform-engineering
@@ -63,8 +63,8 @@ using `read_file` to load the sub-skill instructions.
 | 4 | [`phase-4-backup-remove.md`](references/phase-4-backup-remove.md) | Back up and remove overlapping tooling files |
 | 5 | [`phase-5-run-copier.md`](references/phase-5-run-copier.md) | Run Copier with confirmed values |
 | 6 | [`phase-6-reapply-customizations.md`](references/phase-6-reapply-customizations.md) | Re-apply downstream customizations via diff |
-| 7 | [`phase-7-validate-commit.md`](references/phase-7-validate-commit.md) | Validate build, update `.licenserc.yaml` and `renovate.json`, commit |
-| 8 | [`phase-8-post-onboarding.md`](references/phase-8-post-onboarding.md) | Post-onboarding guidance and cleanup |
+| 7 | [`phase-7-validate-commit.md`](references/phase-7-validate-commit.md) | Validate build, update `.licenserc.yaml` and `renovate.json`, add docs-sync workflow, commit |
+| 8 | [`phase-8-post-onboarding.md`](references/phase-8-post-onboarding.md) | Verify template sync, post-onboarding guidance, and cleanup |
 
 ### Hand-off between phases
 
@@ -112,6 +112,9 @@ description, including:
 - Always confirm extracted values with the user before running Copier.
 - Always test the build (`make html`) before considering the onboarding
   complete.
+- Always create the docs-sync workflow (`.github/workflows/sync_docs_template.yml`,
+  Phase 7 Step 5b) unless the user explicitly opts out — onboarding is not
+  complete without it or a recorded opt-out.
 - Never edit `.copier-answers.yml` manually after generation.
 
 ## Batch Onboarding (Multiple Repositories)

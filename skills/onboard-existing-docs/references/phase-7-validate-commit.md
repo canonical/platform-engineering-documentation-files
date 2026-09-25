@@ -159,9 +159,55 @@ No action needed. Report: "`docs/**` already disabled in Renovate packageRules. 
 > onboarding, remove it when adding the `packageRules` entry so the two
 > mechanisms don't overlap.
 
+### Step 5b: Add the docs-sync workflow
+
+Add a GitHub Actions workflow that keeps the repo in sync with the template by
+running `copier update` on a schedule and opening a PR when the template changes.
+This is the mechanism that makes ongoing central management work, so **create it
+by default** as part of onboarding — only skip it if the user explicitly opts out.
+
+Tell the user: "I'll add `.github/workflows/sync_docs_template.yml` so the repo
+stays in sync with the template automatically. Let me know if you'd prefer not to."
+
+Unless they decline, create `.github/workflows/sync_docs_template.yml`:
+
+```yaml
+name: Sync with platform-engineering-documentation-files
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Every Monday at 6 AM UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    uses: canonical/platform-engineering-documentation-files/.github/workflows/copier-update.yml@main
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+The reusable workflow checks whether the template has new commits, runs
+`copier update` if so, and opens a PR with the diff (conflicts are left inline
+for a human to resolve).
+
+> **Operational caveat:** Opening PRs from Actions requires **both** the
+> `pull-requests: write` permission above **and** the repository/organization
+> setting *"Allow GitHub Actions to create and approve pull requests"* to be
+> enabled (Settings → Actions → General → Workflow permissions). Without it the
+> workflow runs but silently fails to open PRs. Flag this to the user.
+
+> **Supply-chain note:** The `uses:` ref above pins to `@main`. For stronger
+> guarantees, pin to a release tag or commit SHA once the template publishes
+> versioned refs, accepting that you then update the pin manually.
+
 ### Step 6: Commit
 
-Once the build succeeds, instruct the user to commit:
+Once the build succeeds, instruct the user to commit (this includes the docs-sync
+workflow from Step 5b):
 
 ```bash
 git add .

@@ -45,6 +45,7 @@ These files follow predictable patterns but affect build behavior:
 | `docs/.gitignore` | Merged ignore patterns. Verify downstream-specific patterns were preserved. |
 | `.readthedocs.yaml` | RTD build configuration. Verify the Python version and build settings are correct for the project. |
 | `renovate.json` | Added a disabled `packageRules` entry matching `"docs/**"` to prevent Renovate from opening PRs against template-owned documentation files. |
+| `.github/workflows/sync_docs_template.yml` | Automated Copier-update workflow that keeps the repo in sync with the template. Verify the `uses:` ref and that `pull-requests: write` is granted. Requires the repo/org setting *"Allow GitHub Actions to create and approve pull requests"*. |
 
 ## Low priority — copied from the template
 
@@ -75,6 +76,7 @@ before merging:
 - [ ] Verify `make html` succeeds with no warnings
 - [ ] Set up Read the Docs project (if not already configured)
 - [ ] Review re-applied downstream customizations in `docs/conf.py`
+- [ ] Enable *"Allow GitHub Actions to create and approve pull requests"* so the docs-sync workflow can open PRs
 - [ ] Delete the backup at `/tmp/docs-backup/` after confirming everything works
 - [ ] Update any hardcoded references to old documentation URLs
 ```

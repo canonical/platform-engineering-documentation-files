@@ -35,42 +35,28 @@ Tell the user the following key points:
 
 5. **`.licenserc.yaml` update** — If the repo had a `.licenserc.yaml`, `.copier-answers.yml` was added to its `paths-ignore` list during Phase 7. Verify this was done correctly.
 
-### Step 2: Offer to set up automated Copier updates
+### Step 2: Verify the automated Copier-update workflow
 
-Offer to create a GitHub Actions workflow that automatically checks for template
-updates and opens PRs. This keeps the downstream repo in sync with the central
-management solution without manual intervention.
+The docs-sync workflow (`.github/workflows/sync_docs_template.yml`) is created in
+Phase 7, Step 5b and committed with the rest of onboarding. Confirm it is present
+and correct:
 
-Ask the user: "Would you like me to create a GitHub Actions workflow that
-automatically runs `copier update` on a schedule and opens PRs when the template
-changes?"
-
-If the user agrees, create `.github/workflows/sync_docs_template.yml` with the
-following content:
-
-```yaml
-name: Sync with platform-engineering-documentation-files
-
-on:
-  schedule:
-    - cron: "0 6 * * 1" # Every Monday at 6 AM UTC
-  workflow_dispatch:
-
-permissions:
-  contents: write
-  pull-requests: write
-
-jobs:
-  sync:
-    uses: canonical/platform-engineering-documentation-files/.github/workflows/copier-update.yml@main
-    secrets:
-      token: ${{ secrets.GITHUB_TOKEN }}
+```bash
+cat .github/workflows/sync_docs_template.yml
 ```
 
-The workflow checks if the template repository has new commits since the last
-update, runs `copier update` if there are changes, and opens a PR with the diff.
-If `copier update` produces merge conflicts, they are left inline for the user
-to review and resolve before merging.
+Check that:
+- The `uses:` ref points to
+  `canonical/platform-engineering-documentation-files/.github/workflows/copier-update.yml`.
+- `permissions:` grants `contents: write` and `pull-requests: write`.
+
+Then remind the user of the one manual prerequisite: the repository or
+organization must have *"Allow GitHub Actions to create and approve pull
+requests"* enabled (Settings → Actions → General → Workflow permissions), or the
+workflow will run but fail to open sync PRs.
+
+If the user opted out of the workflow in Phase 7, note that they can add it later
+by re-running Phase 7, Step 5b.
 
 ### Step 3: Set up Read the Docs (if applicable)
 
