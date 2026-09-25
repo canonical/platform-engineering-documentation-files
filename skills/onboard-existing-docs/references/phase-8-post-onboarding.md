@@ -78,7 +78,7 @@ If the project uses Read the Docs, remind the user to configure their project on
 
 ### Step 4: Offer PR description guidance
 
-Read [`PR-GUIDE.md`](../assets/PR-GUIDE.md) and offer to structure the PR description using the reviewer priority tiers and human action checklist.
+Read [`PR-GUIDE.md`](../assets/PR-GUIDE.md) and offer to structure the PR description using the required AI-attribution note, the reviewer priority tiers, and the human action checklist.
 
 ### Step 5: Confirm completion
 

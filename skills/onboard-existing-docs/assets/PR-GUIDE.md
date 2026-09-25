@@ -5,6 +5,16 @@ Copier-based documentation management solution. To help human reviewers
 focus their attention, include a `## For reviewers` section in the PR
 description, placed **before** the `## Items requiring human action` section.
 
+## AI attribution (required)
+
+The PR description **must** clearly state that AI was used to prepare it. Place
+this note at the **top** of the PR body, before the `## For reviewers` section:
+
+```markdown
+> **AI-assisted:** This PR was prepared with the help of an AI agent using the
+> `onboard-existing-docs` skill. A human should review all changes before merging.
+```
+
 **Only list files that were actually added or modified in the current run.**
 Omit rows for files that do not apply to this particular repository.
 
