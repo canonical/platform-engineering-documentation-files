@@ -40,13 +40,21 @@ copier copy --defaults --overwrite \
   --data "author=Canonical Ltd." \
   --data "product_page=charmhub.io/my-charm" \
   --data "discourse=https://discourse.charmhub.io" \
+  --data "matrix=https://matrix.to/#/#my-channel:ubuntu.com" \
   --data "github_url=https://github.com/canonical/my-repo" \
-  --data "repo_default_branch=main" \
-  --data "repo_folder=/docs/" \
+  --data "source_edit_link=https://github.com/canonical/my-repo" \
+  --data "docs_host=canonical.com" \
+  --data "rtd_slug=juju/docs/my-charm" \
+  --data "old_domain=canonical-my-charm.readthedocs-hosted.com" \
+  --data "new_domain=canonical.com/juju/docs/my-charm" \
   --data "display_contributors=False" \
-  ... \
   gh:canonical/platform-engineering-documentation-files.git .
 ```
+
+The example above shows the full set typically needed for a legacy Juju charm
+repo. Include a `--data` flag for every value that differs from the template
+default (in practice this almost always includes `source_edit_link`, `rtd_slug`,
+`docs_host`, `old_domain`, and `new_domain`, which the shorter examples omit).
 
 Only include `--data` flags for non-default values. Omit flags for variables where the default is acceptable.
 
@@ -62,6 +70,24 @@ ls docs/release-notes/template/
 ls .readthedocs.yaml .copier-answers.yml
 ```
 
+### Step 4a: Verify `_skip_if_exists` files were preserved
+
+Copier's `_skip_if_exists` mechanism protects three files from being overwritten:
+`docs/_static/js/overwrite_links.js`, `docs/_templates/header.html`, and
+`docs/redirects.txt`. Verify they're intact after Copier runs:
+
+```bash
+git diff --stat docs/_static/js/overwrite_links.js docs/_templates/header.html docs/redirects.txt 2>/dev/null
+```
+
+If any of these files show as "modified" or "deleted" in the diff, the
+`_skip_if_exists` mechanism didn't apply correctly. Restore them from the backup
+immediately:
+
+```bash
+cp /tmp/docs-backup/docs/<path-to-file> docs/<path-to-file>
+```
+
 ### Step 5: Verify `.copier-answers.yml`
 
 Read `.copier-answers.yml` and confirm it contains the correct values matching `extracted_values`. If any value is wrong, do not edit `.copier-answers.yml` manually — re-run `copier copy` with corrected `--data` flags.
@@ -74,3 +100,4 @@ Carry forward:
 - `template_uncovered_values` — from Phase 2
 - `downstream_customizations` — from Phase 3
 - `content_files` — from Phase 1
+- `release_notes_overrides` — from Phase 1

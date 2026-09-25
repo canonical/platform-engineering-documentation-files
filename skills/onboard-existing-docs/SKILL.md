@@ -13,7 +13,7 @@ license: Apache-2.0
 metadata:
   author: Canonical/platform-engineering
   summary: Onboard a downstream repo with pre-existing documentation tooling into the Copier-based central management solution
-  version: "1.0.1"
+  version: "1.5.0"
   tags:
     - canonical
     - platform-engineering
@@ -63,8 +63,8 @@ using `read_file` to load the sub-skill instructions.
 | 4 | [`phase-4-backup-remove.md`](references/phase-4-backup-remove.md) | Back up and remove overlapping tooling files |
 | 5 | [`phase-5-run-copier.md`](references/phase-5-run-copier.md) | Run Copier with confirmed values |
 | 6 | [`phase-6-reapply-customizations.md`](references/phase-6-reapply-customizations.md) | Re-apply downstream customizations via diff |
-| 7 | [`phase-7-validate-commit.md`](references/phase-7-validate-commit.md) | Validate build, diagnose failures, commit |
-| 8 | [`phase-8-post-onboarding.md`](references/phase-8-post-onboarding.md) | Post-onboarding guidance and cleanup |
+| 7 | [`phase-7-validate-commit.md`](references/phase-7-validate-commit.md) | Validate build, update `.licenserc.yaml` and `renovate.json`, add docs-sync workflow, commit |
+| 8 | [`phase-8-post-onboarding.md`](references/phase-8-post-onboarding.md) | Verify template sync, post-onboarding guidance, and cleanup |
 
 ### Hand-off between phases
 
@@ -75,6 +75,7 @@ values forward:
 |---|---|---|---|
 | `overlapping_files` | Phase 1 | Phases 2, 3, 4 | List of files that overlap with the template |
 | `content_files` | Phase 1 | Phases 3, 4, 6 | List of documentation content files to preserve |
+| `release_notes_overrides` | Phase 1 | Phases 4, 6 | Customized or format-mismatched release-notes templates to preserve/restore |
 | `extracted_values` | Phase 2 | Phases 3, 4, 5, 6, 7, 8 | Dict of Copier variable → confirmed value |
 | `template_uncovered_values` | Phase 2 | Phases 3, 6 | Custom config not covered by the template |
 | `downstream_customizations` | Phase 3 | Phases 4, 6 | Structured list of customizations to re-apply |
@@ -96,6 +97,7 @@ values forward:
 
 Read [`PR-GUIDE.md`](assets/PR-GUIDE.md) and use it to structure the PR
 description, including:
+- The required AI-attribution note at the top of the PR body
 - The `## For reviewers` section with high/medium/low priority file tiers
 - The `## Items requiring human action` checklist
 
@@ -103,8 +105,40 @@ description, including:
 
 - Never delete documentation content files (`.md`, `.rst`, `_static/`,
   images). Only remove tooling/config files that overlap with the template.
+  The one exception is local CSS/JS assets that the template now serves via
+  remote URLs and that are no longer referenced anywhere (see Phase 6,
+  Step 2a) — e.g. `cookie-banner.css`, `bundle.js`.
 - Always back up before removing anything.
 - Always confirm extracted values with the user before running Copier.
 - Always test the build (`make html`) before considering the onboarding
   complete.
+- Always create the docs-sync workflow (`.github/workflows/sync_docs_template.yml`,
+  Phase 7 Step 5b) unless the user explicitly opts out — onboarding is not
+  complete without it or a recorded opt-out.
 - Never edit `.copier-answers.yml` manually after generation.
+
+## Batch Onboarding (Multiple Repositories)
+
+When onboarding two or more repositories simultaneously:
+
+1. **Pre-flight comparison**: Before starting Phase 1, build a comparison
+   matrix of each repo's profile:
+   - Starter pack generation (new `_dev/` vs legacy `.sphinx/`)
+   - Content format (`.md` vs `.rst`)
+   - Redirect mechanism (`rediraffe_redirects` vs `sphinx_reredirects`)
+   - Extra dependencies beyond the template
+
+2. **Execution order**: Process repos **sequentially** (complete all 8 phases
+   for repo A before starting repo B). This keeps per-repo state tracking
+   simple and avoids cross-contamination.
+
+3. **Per-repo backup paths**: Use unique backup paths for each repo (e.g.,
+   `/tmp/docs-backup-<repo-name>/`) to avoid overwriting backups.
+
+4. **Batch confirmations**: When repos share similar profiles, present Phase 2
+   extracted values for all repos at once to reduce confirmation rounds. For
+   repos with different profiles, confirm separately.
+
+5. **Legacy `.sphinx/` awareness**: Repos with legacy `.sphinx/` layouts
+   require extra handling in Phases 2, 3, 4, 6, and 7. See individual phase
+   files for legacy-specific steps.

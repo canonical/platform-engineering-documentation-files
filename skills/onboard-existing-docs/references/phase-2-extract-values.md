@@ -26,6 +26,29 @@ This outputs a JSON object with two keys:
 
 If the script cannot be run (e.g., the downstream repo doesn't have Python available), proceed with manual extraction in Step 2.
 
+### Step 1a: Extract domain redirect values from `overwrite_links.js`
+
+`overwrite_links.js` may live in either the new `_dev/` layout or the legacy
+`.sphinx/` layout. Check both locations:
+
+```bash
+# Check new layout first, then legacy
+for path in docs/_static/js/overwrite_links.js docs/.sphinx/_static/js/overwrite_links.js; do
+  if test -f "$path"; then
+    grep -oP "const oldDomain = '\\K[^']+" "$path" 2>/dev/null || echo ""
+    grep -oP "const newDomain = '\\K[^']+" "$path" 2>/dev/null || echo ""
+    break
+  fi
+done
+```
+
+Map the results to `extracted_values`:
+- `old_domain` — the extracted `oldDomain` value (empty string if not found)
+- `new_domain` — the extracted `newDomain` value (empty string if not found)
+
+If neither file exists or the grep returns empty, leave both as empty
+strings (the Copier defaults).
+
 ### Step 2: Manual extraction (fallback)
 
 If the script is unavailable, manually read `docs/conf.py` and extract each value. Map to the corresponding Copier question variable:
@@ -46,6 +69,8 @@ If the script is unavailable, manually read `docs/conf.py` and extract each valu
 | `html_context["repo_default_branch"]` | `repo_default_branch` | |
 | `html_context["repo_folder"]` | `repo_folder` | |
 | `html_context["display_contributors"]` | `display_contributors` | Boolean |
+| `overwrite_links.js`: `const oldDomain = '...'` | `old_domain` | Old RTD domain to redirect from |
+| `overwrite_links.js`: `const newDomain = '...'` | `new_domain` | New canonical.com domain path |
 
 ### Step 3: Identify values NOT covered by the template
 
@@ -55,6 +80,10 @@ Common non-Copier config to look for:
 - Custom Sphinx `extensions = [...]` entries beyond what the template provides
 - `intersphinx_mapping` for cross-referencing external docs
 - `rst_prolog` with custom substitutions (e.g., `|charm|`)
+- `rst_epilog` with `.. include::` directives (e.g., `reuse/links.txt`)
+- `myst_substitutions` loaded from YAML (e.g., `reuse/substitutions.yaml`)
+- `redirects = {...}` (legacy `sphinx_reredirects` dict) — modernize to `rediraffe_redirects` in Phase 6
+- `discourse_prefix` workaround for canonical-sphinx issue #34
 - `exclude_patterns`, `html_css_files`, `html_js_files`
 - `html_static_path`, `templates_path`
 - `linkcheck_retries`, `linkcheck_timeout`
@@ -71,7 +100,22 @@ These will be re-applied in Phase 6.
 
 ### Step 4: Extract RTD slug (if applicable)
 
-If the downstream repo has a `.readthedocs.yaml`, read it and extract the RTD project slug for the `rtd_slug` Copier variable.
+Extract the `rtd_slug` Copier variable. **`rtd_slug` is the URL path segment used
+to build the canonical docs URL, not necessarily the Read the Docs project slug.**
+The template renders it as `https://canonical.com/{{ rtd_slug }}/{version}/`, so it
+must match the path in the existing `html_baseurl` / `ogp_site_url`, not the RTD
+dashboard project name.
+
+To find the right value, check these sources in order:
+
+- The existing `conf.py` `slug = "..."` value, or the path in
+  `ogp_site_url` / `html_baseurl` (e.g. `https://canonical.com/juju/docs/haproxy-charm/...`
+  → `rtd_slug = "juju/docs/haproxy-charm"`).
+- The `new_domain` from `overwrite_links.js` (the path after the host).
+
+The RTD *project* slug (e.g. `canonical-haproxy-juju-charm`, often visible in
+`old_domain`) is usually **not** the correct value — do not use it unless it
+matches the canonical URL path.
 
 ### Step 5: Confirm values with the user
 

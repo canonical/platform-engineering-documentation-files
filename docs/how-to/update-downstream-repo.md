@@ -28,7 +28,7 @@ workflow provided by this template. The workflow checks for template updates,
 runs `copier update`, and opens a pull request with the changes.
 
 Add a workflow file to your downstream repository (e.g.,
-`.github/workflows/sync-docs-template.yml`):
+`.github/workflows/sync_docs_template.yml`):
 
 ```yaml
 name: Sync with platform-engineering-documentation-files

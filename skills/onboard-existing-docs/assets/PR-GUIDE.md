@@ -5,6 +5,16 @@ Copier-based documentation management solution. To help human reviewers
 focus their attention, include a `## For reviewers` section in the PR
 description, placed **before** the `## Items requiring human action` section.
 
+## AI attribution (required)
+
+The PR description **must** clearly state that AI was used to prepare it. Place
+this note at the **top** of the PR body, before the `## For reviewers` section:
+
+```markdown
+> **AI-assisted:** This PR was prepared with the help of an AI agent using the
+> `onboard-existing-docs` skill. A human should review all changes before merging.
+```
+
 **Only list files that were actually added or modified in the current run.**
 Omit rows for files that do not apply to this particular repository.
 
@@ -34,6 +44,8 @@ These files follow predictable patterns but affect build behavior:
 | `docs/requirements.txt` | Standard dependencies from the template. Verify no conflicts with re-applied extras. |
 | `docs/.gitignore` | Merged ignore patterns. Verify downstream-specific patterns were preserved. |
 | `.readthedocs.yaml` | RTD build configuration. Verify the Python version and build settings are correct for the project. |
+| `renovate.json` | Added a disabled `packageRules` entry matching `"docs/**"` to prevent Renovate from opening PRs against template-owned documentation files. |
+| `.github/workflows/sync_docs_template.yml` | Automated Copier-update workflow that keeps the repo in sync with the template. Verify the `uses:` ref and that `pull-requests: write` is granted. Requires the repo/org setting *"Allow GitHub Actions to create and approve pull requests"*. |
 
 ## Low priority — copied from the template
 
@@ -48,7 +60,7 @@ template and should not deviate from upstream. Wrap them in a collapsed
 
 - `docs/_dev/*` — Developer tooling (vale, pa11y, pre-commit, pymarkdown, sphinx-stack updater)
 - `docs/_templates/*` — HTML header and footer templates
-- `docs/release-notes/template/*` — Release note artifact templates
+- `docs/release-notes/template/*` — Release note artifact templates (only if the repo has release notes; omit this line for repos without them)
 </details>
 ```
 
@@ -64,6 +76,7 @@ before merging:
 - [ ] Verify `make html` succeeds with no warnings
 - [ ] Set up Read the Docs project (if not already configured)
 - [ ] Review re-applied downstream customizations in `docs/conf.py`
+- [ ] Enable *"Allow GitHub Actions to create and approve pull requests"* so the docs-sync workflow can open PRs
 - [ ] Delete the backup at `/tmp/docs-backup/` after confirming everything works
 - [ ] Update any hardcoded references to old documentation URLs
 ```

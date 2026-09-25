@@ -33,15 +33,40 @@ Tell the user the following key points:
    rm -rf /tmp/docs-backup/
    ```
 
-### Step 2: Set up Read the Docs (if applicable)
+5. **`.licenserc.yaml` update** — If the repo had a `.licenserc.yaml`, `.copier-answers.yml` was added to its `paths-ignore` list during Phase 7. Verify this was done correctly.
+
+### Step 2: Verify the automated Copier-update workflow
+
+The docs-sync workflow (`.github/workflows/sync_docs_template.yml`) is created in
+Phase 7, Step 5b and committed with the rest of onboarding. Confirm it is present
+and correct:
+
+```bash
+cat .github/workflows/sync_docs_template.yml
+```
+
+Check that:
+- The `uses:` ref points to
+  `canonical/platform-engineering-documentation-files/.github/workflows/copier-update.yml`.
+- `permissions:` grants `contents: write` and `pull-requests: write`.
+
+Then remind the user of the one manual prerequisite: the repository or
+organization must have *"Allow GitHub Actions to create and approve pull
+requests"* enabled (Settings → Actions → General → Workflow permissions), or the
+workflow will run but fail to open sync PRs.
+
+If the user opted out of the workflow in Phase 7, note that they can add it later
+by re-running Phase 7, Step 5b.
+
+### Step 3: Set up Read the Docs (if applicable)
 
 If the project uses Read the Docs, remind the user to configure their project on Read the Docs to build from the repository. The generated `.readthedocs.yaml` is already configured.
 
-### Step 3: Offer PR description guidance
+### Step 4: Offer PR description guidance
 
-Read [`PR-GUIDE.md`](../assets/PR-GUIDE.md) and offer to structure the PR description using the reviewer priority tiers and human action checklist.
+Read [`PR-GUIDE.md`](../assets/PR-GUIDE.md) and offer to structure the PR description using the required AI-attribution note, the reviewer priority tiers, and the human action checklist.
 
-### Step 4: Confirm completion
+### Step 5: Confirm completion
 
 Ask the user: "Is the onboarding complete and working as expected? Do you need any adjustments?"
 

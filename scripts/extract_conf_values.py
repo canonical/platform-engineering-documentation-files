@@ -62,6 +62,7 @@ def extract_conf_values(conf_path: str) -> dict:
         "extensions",
         "intersphinx_mapping",
         "rst_prolog",
+        "rst_epilog",
         "exclude_patterns",
         "html_css_files",
         "html_js_files",
@@ -74,6 +75,7 @@ def extract_conf_values(conf_path: str) -> dict:
         "numfig",
         "nitpick_ignore",
         "nitpick_ignore_regex",
+        "source_suffix",
         "suppress_warnings",
     }
 
