@@ -40,6 +40,7 @@ def extract_conf_values(conf_path: str) -> dict:
         "ogp_image": "ogp_image",
         "html_favicon": "html_favicon",
         "html_title": "html_title",
+        "slug": "slug",
     }
 
     # ── html_context dictionary entries ────────────────────────

@@ -45,7 +45,7 @@ and optional values.
 | `html_favicon` | `{value}` | Custom favicon path |
 | `product_tag` | `{value}` | Product tag image path |
 | `display_contributors` | `{value}` | Show contributors on each page |
-| `rtd_slug` | `{value}` | Read the Docs project slug |
+| `rtd_slug` | `{value}` | URL path segment for the canonical docs URL (from `slug` in `conf.py` or `newDomain` in `overwrite_links.js`) |
 | `old_domain` | `{value}` | Old RTD domain to redirect from |
 | `new_domain` | `{value}` | New canonical.com domain path |
 

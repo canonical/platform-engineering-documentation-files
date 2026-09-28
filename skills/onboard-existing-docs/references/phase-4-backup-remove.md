@@ -117,3 +117,4 @@ Carry forward:
 - `downstream_customizations` — from Phase 3
 - `content_files` — from Phase 1
 - `release_notes_overrides` — from Phase 1
+- `header_override` — from Phase 1

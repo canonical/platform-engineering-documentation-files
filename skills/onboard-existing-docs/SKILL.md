@@ -76,6 +76,7 @@ values forward:
 | `overlapping_files` | Phase 1 | Phases 2, 3, 4 | List of files that overlap with the template |
 | `content_files` | Phase 1 | Phases 3, 4, 6 | List of documentation content files to preserve |
 | `release_notes_overrides` | Phase 1 | Phases 4, 6 | Customized or format-mismatched release-notes templates to preserve/restore |
+| `header_override` | Phase 1 | Phases 4, 6 | `true` if downstream `header.html` differs from the template, `false` otherwise |
 | `extracted_values` | Phase 2 | Phases 3, 4, 5, 6, 7, 8 | Dict of Copier variable → confirmed value |
 | `template_uncovered_values` | Phase 2 | Phases 3, 6 | Custom config not covered by the template |
 | `downstream_customizations` | Phase 3 | Phases 4, 6 | Structured list of customizations to re-apply |
@@ -96,10 +97,13 @@ values forward:
 ## After all phases complete
 
 Read [`PR-GUIDE.md`](assets/PR-GUIDE.md) and use it to structure the PR
-description, including:
-- The required AI-attribution note at the top of the PR body
-- The `## For reviewers` section with high/medium/low priority file tiers
-- The `## Items requiring human action` checklist
+description:
+1. Locate the downstream repo's existing PR template (`.github/pull_request_template.md`
+   or similar) and fill it in with onboarding-specific details.
+2. Insert the `## For reviewers` section (with high/medium/low priority file
+   tiers) and the `## Items requiring human action` checklist at a reasonable
+   place in the filled-in template, or append them at the end.
+3. Place the required AI-attribution note at the very top of the PR body.
 
 ## Non-Negotiables
 

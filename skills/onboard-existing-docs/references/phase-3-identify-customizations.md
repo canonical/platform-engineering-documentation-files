@@ -58,3 +58,5 @@ Carry forward:
 - `template_uncovered_values` — from Phase 2
 - `overlapping_files` — from Phase 1
 - `content_files` — from Phase 1
+- `release_notes_overrides` — from Phase 1
+- `header_override` — from Phase 1

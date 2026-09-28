@@ -13,12 +13,13 @@ description: "Phase 1 of the onboard-existing-docs skill. Audits the downstream 
 
 ### Step 0: Ensure you're on a feature branch
 
-Check the current branch. If you're on `main`, create a new feature branch
-before making any changes:
+Check the current branch. If you're on `main`, ensure it's up-to-date, then
+create a new feature branch before making any changes:
 
 ```bash
 CURRENT_BRANCH=$(git branch --show-current)
 if [ "$CURRENT_BRANCH" = "main" ]; then
+  git pull origin main
   git checkout -b docs/onboard-copier-management
   echo "Created branch docs/onboard-copier-management"
 else
@@ -88,11 +89,9 @@ If `docs/.sphinx/` exists, add it to `overlapping_files` — it will be removed 
 The template's `copier.yml` defines `_skip_if_exists` for certain files. These
 will **not** be overwritten by Copier even if they exist downstream:
 
-| File | Behaviour |
-|---|---|
-| `docs/redirects.txt` | Skipped if it already exists |
-| `docs/_templates/header.html` | Skipped if it already exists |
-| `docs/_static/js/overwrite_links.js` | Skipped if it already exists |
+- `docs/redirects.txt`
+- `docs/_templates/header.html`
+- `docs/_static/js/overwrite_links.js`
 
 Do **not** add these to `overlapping_files`. Flag them in the audit report as
 "preserved — skipped by `_skip_if_exists`."
@@ -132,6 +131,21 @@ Do **not** remove `docs/release-notes/template/` wholesale in Phase 4 — leave 
 in place so Phase 6 can restore the downstream versions and drop the mismatched
 generated file.
 
+#### `header.html`: check for downstream customization
+
+`docs/_templates/header.html` is protected by `_skip_if_exists`, but the
+downstream version may contain customizations that differ from the template.
+Detect this so Phase 6 can evaluate whether to keep or update it:
+
+```bash
+diff docs/_templates/header.html \
+     <template-repo>/template/docs/_templates/header.html \
+  >/dev/null 2>&1 && echo "header.html: identical" || echo "header.html: DIFFERS (preserve downstream)"
+```
+
+If the downstream `header.html` differs from the template, set
+`header_override = true`. Otherwise set `header_override = false`.
+
 ### Step 3: Identify overlapping files
 
 For each file in the template's output list, check if it exists in the downstream repo. Build a list of overlapping files.
@@ -153,3 +167,5 @@ Carry forward:
 - `content_files` — list of documentation content files to preserve
 - `release_notes_overrides` — customized or format-mismatched release-notes
   template files to preserve/restore (empty if none)
+- `header_override` — `true` if downstream `header.html` differs from the
+  template, `false` otherwise

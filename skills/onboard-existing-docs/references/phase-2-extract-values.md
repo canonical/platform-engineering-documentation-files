@@ -69,6 +69,7 @@ If the script is unavailable, manually read `docs/conf.py` and extract each valu
 | `html_context["repo_default_branch"]` | `repo_default_branch` | |
 | `html_context["repo_folder"]` | `repo_folder` | |
 | `html_context["display_contributors"]` | `display_contributors` | Boolean |
+| `slug = "..."` | `rtd_slug` | URL path segment; absent in some repos, fall back to Step 4 |
 | `overwrite_links.js`: `const oldDomain = '...'` | `old_domain` | Old RTD domain to redirect from |
 | `overwrite_links.js`: `const newDomain = '...'` | `new_domain` | New canonical.com domain path |
 
@@ -106,15 +107,20 @@ The template renders it as `https://canonical.com/{{ rtd_slug }}/{version}/`, so
 must match the path in the existing `html_baseurl` / `ogp_site_url`, not the RTD
 dashboard project name.
 
-To find the right value, check these sources in order:
+To find the right value, use this deterministic hierarchy:
 
-- The existing `conf.py` `slug = "..."` value, or the path in
-  `ogp_site_url` / `html_baseurl` (e.g. `https://canonical.com/juju/docs/haproxy-charm/...`
-  → `rtd_slug = "juju/docs/haproxy-charm"`).
-- The `new_domain` from `overwrite_links.js` (the path after the host).
+1. **Primary — `slug` from `conf.py`**: The extraction script (Step 1) now
+   captures the top-level `slug = "..."` variable as part of `copier_values`.
+   This is the canonical definition of the slug. If the script returned a `slug`
+   value, use it directly as `rtd_slug`.
+
+2. **Fallback — `newDomain` from `overwrite_links.js`**: If `slug` is absent
+   from `conf.py`, derive `rtd_slug` from the `newDomain` value extracted in
+   Step 1a — take the path segment after the host (e.g.
+   `canonical.com/juju/docs/haproxy-charm` → `rtd_slug = "juju/docs/haproxy-charm"`).
 
 The RTD *project* slug (e.g. `canonical-haproxy-juju-charm`, often visible in
-`old_domain`) is usually **not** the correct value — do not use it unless it
+`old_domain`) is **not** the correct value — do not use it unless it
 matches the canonical URL path.
 
 ### Step 5: Confirm values with the user
@@ -130,3 +136,5 @@ Carry forward:
 - `template_uncovered_values` — list of custom config not covered by the template
 - `overlapping_files` — from Phase 1
 - `content_files` — from Phase 1
+- `release_notes_overrides` — from Phase 1
+- `header_override` — from Phase 1

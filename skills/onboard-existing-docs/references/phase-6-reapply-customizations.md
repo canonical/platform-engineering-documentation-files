@@ -189,6 +189,27 @@ used by `header.html` / `footer.html` or by content pages must **not** be remove
 Typical orphans to remove for a legacy `.sphinx/` migration are
 `docs/_static/cookie-banner.css` and `docs/_static/js/bundle.js`.
 
+### Step 2b: Evaluate `header.html` customization
+
+If `header_override` is `true` (from Phase 1), the downstream `header.html`
+differs from the template version. `_skip_if_exists` preserved the downstream
+file during Copier generation, so it is already in place.
+
+Diff the downstream version against the template:
+
+```bash
+diff /tmp/docs-backup/docs/_templates/header.html \
+     <template-repo>/template/docs/_templates/header.html
+```
+
+- **Interactive mode**: Present the diff to the user and ask:
+  "The downstream `header.html` has customizations. Keep the downstream version
+  or update to the template version?"
+- **Autopilot mode** (cannot ask the user): Preserve the downstream
+  `header.html` (no action needed — `_skip_if_exists` already kept it). Add the
+  diff to the PR description under `## For reviewers` → High priority tier as a
+  new row for `docs/_templates/header.html` so a human can decide.
+
 ### Step 3: Re-apply `Makefile` customizations
 
 Using `downstream_customizations.makefile_targets` from Phase 3, re-add any custom Makefile targets. Append them after the existing targets, preserving the template's standard targets.
@@ -252,3 +273,4 @@ Carry forward:
 - `backup_path` — from Phase 4
 - `extracted_values` — from Phase 2
 - `content_files` — from Phase 1
+- `header_override` — from Phase 1
