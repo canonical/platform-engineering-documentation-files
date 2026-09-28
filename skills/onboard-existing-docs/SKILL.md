@@ -116,7 +116,7 @@ description:
 - Always confirm extracted values with the user before running Copier.
 - Always test the build (`make html`) before considering the onboarding
   complete.
-- Always create the docs-sync workflow (`.github/workflows/sync_docs_template.yml`,
+- Always create the docs-sync workflow (`.github/workflows/sync_docs_template.yaml`,
   Phase 7 Step 5b) unless the user explicitly opts out — onboarding is not
   complete without it or a recorded opt-out.
 - Never edit `.copier-answers.yml` manually after generation.

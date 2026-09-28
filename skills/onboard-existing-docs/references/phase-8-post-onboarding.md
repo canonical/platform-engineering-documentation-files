@@ -37,12 +37,12 @@ Tell the user the following key points:
 
 ### Step 2: Verify the automated Copier-update workflow
 
-The docs-sync workflow (`.github/workflows/sync_docs_template.yml`) is created in
+The docs-sync workflow (`.github/workflows/sync_docs_template.yaml`) is created in
 Phase 7, Step 5b and committed with the rest of onboarding. Confirm it is present
 and correct:
 
 ```bash
-cat .github/workflows/sync_docs_template.yml
+cat .github/workflows/sync_docs_template.yaml
 ```
 
 Check that:

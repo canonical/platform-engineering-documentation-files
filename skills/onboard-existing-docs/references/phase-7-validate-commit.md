@@ -166,10 +166,10 @@ running `copier update` on a schedule and opening a PR when the template changes
 This is the mechanism that makes ongoing central management work, so **create it
 by default** as part of onboarding — only skip it if the user explicitly opts out.
 
-Tell the user: "I'll add `.github/workflows/sync_docs_template.yml` so the repo
+Tell the user: "I'll add `.github/workflows/sync_docs_template.yaml` so the repo
 stays in sync with the template automatically. Let me know if you'd prefer not to."
 
-Unless they decline, create `.github/workflows/sync_docs_template.yml`:
+Unless they decline, create `.github/workflows/sync_docs_template.yaml`:
 
 ```yaml
 name: Sync with platform-engineering-documentation-files

@@ -73,7 +73,7 @@ These files follow predictable patterns but affect build behavior:
 | `docs/.gitignore` | Merged ignore patterns. Verify downstream-specific patterns were preserved. |
 | `.readthedocs.yaml` | RTD build configuration. Verify the Python version and build settings are correct for the project. |
 | `renovate.json` | Added a disabled `packageRules` entry matching `"docs/**"` to prevent Renovate from opening PRs against template-owned documentation files. |
-| `.github/workflows/sync_docs_template.yml` | Automated Copier-update workflow that keeps the repo in sync with the template. Verify the `uses:` ref and that `pull-requests: write` is granted. Requires the repo/org setting *"Allow GitHub Actions to create and approve pull requests"*. |
+| `.github/workflows/sync_docs_template.yaml` | Automated Copier-update workflow that keeps the repo in sync with the template. Verify the `uses:` ref and that `pull-requests: write` is granted. Requires the repo/org setting *"Allow GitHub Actions to create and approve pull requests"*. |
 
 ### Low priority — copied from the template
 
