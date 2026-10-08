@@ -54,15 +54,11 @@ The table below shows the required or supported versions of the software necessa
    * - Software
      - Required version
    * - Juju
-     - XXXX
-   * - Terraform
-     - XXXX
-   * - Terraform Juju provider
-     - XXXX
+     - {{ juju_version }}
+   * - Kubernetes
+     - {{ kubernetes_version }}
    * - Ubuntu
-     - XXXX
-   * - XXXX
-     - XXXX
+     - {{ ubuntu_version }}
 
 {% set ns = namespace(break=False) %}
 {% for feat in changes -%}
