@@ -8,7 +8,6 @@ juju_version:
 kubernetes_version:
 ubuntu_version:
 
-included_changes: 
-earliest_revision: 
-latest_revision: 
-
+included_changes:
+earliest_revision:
+latest_revision:
