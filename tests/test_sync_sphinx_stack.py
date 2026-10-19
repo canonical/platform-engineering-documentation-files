@@ -229,6 +229,18 @@ class RequirementsMergeTests(SyncTestCase):
         )
         self.assertEqual(entry["merge"]["local_only"], ["canonical-sphinx==0.7.1"])
 
+    def test_appended_lines_keep_upstream_comments(self):
+        write_tree(self.repo / "template", {"docs/requirements.txt": "sphinx==8.0\n"})
+        upstream = self.snapshot("up", {"docs/requirements.txt": "newpkg~=1.0  # needed for X\n"})
+
+        self.run_sync(upstream, {"version": 1, "mirrored": {}}, ref="3.0")
+
+        self.assertTrue(
+            self.local("docs/requirements.txt")
+            .read_text()
+            .endswith("# Added from sphinx-stack 3.0\nnewpkg~=1.0  # needed for X\n")
+        )
+
     def test_no_new_packages_leaves_file_untouched(self):
         content = "sphinx==8.0\n"
         write_tree(self.repo / "template", {"docs/requirements.txt": content})
@@ -343,6 +355,17 @@ class CliAndSnapshotTests(SyncTestCase):
         markdown = report_md.read_text()
         self.assertIn("`2.0` → `3.0`", markdown)
         self.assertIn("| `template/docs/_templates/footer.html` | removed |", markdown)
+
+    def test_compact_markdown_omits_informational_lists(self):
+        upstream = self.snapshot("up", {"docs/_dev/a": "x", "docs/index.rst": "y"})
+        _, report = self.run_sync(upstream, {"version": 1, "mirrored": {}})
+
+        full = sss.render_markdown(report)
+        compact = sss.render_markdown(report, compact=True)
+
+        self.assertIn("`docs/index.rst`: ignored", full)
+        self.assertNotIn("`docs/index.rst`", compact)
+        self.assertIn("| `template/docs/_dev/a` | added |", compact)
 
     def test_extract_snapshot_strips_top_level_directory(self):
         src = self.snapshot("src/sphinx-stack-3.0", {"docs/Makefile": "all:\n"})

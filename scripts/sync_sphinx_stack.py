@@ -38,6 +38,7 @@ snapshots instead of downloading them.
 """
 
 import argparse
+import functools
 import hashlib
 import json
 import os
@@ -59,6 +60,8 @@ DEFAULT_STATE = "scripts/sphinx_stack_sync_state.json"
 _REPOSITORY_RE = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 # Statuses that require a human to look at the sync pull request.
 ATTENTION_STATUSES = ("conflict", "review", "orphaned", "untracked")
+# Keeps the Markdown report well under GitHub's 65,536-character PR body limit.
+MAX_MARKDOWN_LENGTH = 60000
 
 
 class SyncError(Exception):
@@ -68,6 +71,7 @@ class SyncError(Exception):
 # ── Policy ─────────────────────────────────────────────────────
 
 
+@functools.cache
 def compile_pattern(pattern: str) -> re.Pattern:
     """Compile a glob pattern where ``*`` stays within a segment and ``**`` spans segments."""
     regex = ""
@@ -238,8 +242,12 @@ def write_json(path: Path, data: dict) -> None:
 _REQUIREMENT_NAME = re.compile(r"^([A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?)")
 
 
-def parse_requirements(text: str) -> dict[str, str]:
-    """Map normalized package names (or raw option lines) to requirement lines."""
+def parse_requirements(text: str) -> dict[str, tuple[str, str]]:
+    """Map normalized package names (or option lines) to ``(requirement, raw line)``.
+
+    The requirement has inline comments stripped and is used for comparison;
+    the raw line keeps upstream comments and is used when appending.
+    """
     requirements = {}
     for raw in text.splitlines():
         line = re.sub(r"(^|\s)#.*$", "", raw).strip()
@@ -250,7 +258,7 @@ def parse_requirements(text: str) -> dict[str, str]:
             key = re.sub(r"[-_.]+", "-", match.group(1)).lower()
         else:
             key = line
-        requirements.setdefault(key, line)
+        requirements.setdefault(key, (line, raw.strip()))
     return requirements
 
 
@@ -264,19 +272,19 @@ def merge_requirements(local: Path, upstream: Path, ref: str, dry_run: bool) -> 
     if not local.is_file():
         if not dry_run:
             copy_file(upstream, local)
-        added = list(parse_requirements(upstream_text).values())
+        added = [raw for _, raw in parse_requirements(upstream_text).values()]
         return {"status": "added", "added": added, "version_differences": [], "local_only": []}
 
     local_text = local.read_text(encoding="utf-8")
     local_reqs = parse_requirements(local_text)
     upstream_reqs = parse_requirements(upstream_text)
-    added = [line for key, line in upstream_reqs.items() if key not in local_reqs]
+    added = [raw for key, (_, raw) in upstream_reqs.items() if key not in local_reqs]
     differences = [
-        {"name": key, "local": local_reqs[key], "upstream": line}
-        for key, line in upstream_reqs.items()
-        if key in local_reqs and local_reqs[key] != line
+        {"name": key, "local": local_reqs[key][0], "upstream": line}
+        for key, (line, _) in upstream_reqs.items()
+        if key in local_reqs and local_reqs[key][0] != line
     ]
-    local_only = [line for key, line in local_reqs.items() if key not in upstream_reqs]
+    local_only = [line for key, (line, _) in local_reqs.items() if key not in upstream_reqs]
 
     if added and not dry_run:
         separator = "" if local_text.endswith("\n") or not local_text else "\n"
@@ -384,8 +392,12 @@ def sync(
             add_entry(path, action, rule, status, detail)
             continue
         if action == "merge":
-            result = MERGE_HANDLERS[rule.handler](local, src, ref, dry_run)
-            entry = add_entry(path, action, rule, result.pop("status"), None, merge=result)
+            if local.exists() and not local.is_file():
+                detail = "Local path exists but is not a regular file."
+                entry = add_entry(path, action, rule, "conflict", detail)
+            else:
+                result = MERGE_HANDLERS[rule.handler](local, src, ref, dry_run)
+                entry = add_entry(path, action, rule, result.pop("status"), None, merge=result)
         elif action == "preserve":
             entry = add_entry(path, action, rule, "preserved")
         elif action == "ignore":
@@ -414,7 +426,7 @@ def sync(
         action, rule = policy.classify(path)
         local = dest_root / path
         if not local.is_file():
-            add_entry(path, "mirror", rule, "removed", "Removed upstream; already absent locally.")
+            add_entry(path, action, rule, "removed", "Removed upstream; already absent locally.")
         elif action != "mirror":
             detail = "Removed upstream, but no longer mirrored by policy; left in place."
             add_entry(path, action, rule, "untracked", detail)
@@ -485,7 +497,8 @@ def _code(text) -> str:
     return f"`{text}`"
 
 
-def render_markdown(report: dict, policy_path: str = DEFAULT_POLICY) -> str:
+def render_markdown(report: dict, policy_path: str = DEFAULT_POLICY, compact: bool = False) -> str:
+    """Render the report as Markdown. ``compact`` omits the informational file lists."""
     upstream, ref = report["upstream"], report["ref"]
     previous = report.get("previous_ref")
     title = f"{_code(previous)} → {_code(ref)}" if previous else _code(ref)
@@ -580,7 +593,9 @@ def render_markdown(report: dict, policy_path: str = DEFAULT_POLICY) -> str:
     lines.append("")
 
     changes = report.get("upstream_changes")
-    if changes and any(changes.values()):
+    if compact:
+        lines += ["_Unchanged files and upstream change lists omitted; see the JSON report._", ""]
+    elif changes and any(changes.values()):
         lines += [
             f"<details><summary>All upstream file changes since {_code(previous)}</summary>",
             "",
@@ -590,7 +605,7 @@ def render_markdown(report: dict, policy_path: str = DEFAULT_POLICY) -> str:
         lines += ["", "</details>", ""]
 
     quiet = [e for e in files if e["status"] in ("unchanged", "preserved", "ignored")]
-    if quiet:
+    if quiet and not compact:
         lines += [
             f"<details><summary>{len(quiet)} unchanged, preserved, or ignored file(s)</summary>",
             "",
@@ -650,6 +665,8 @@ def main(argv: list[str] | None = None) -> int:
     if not args.dry_run:
         write_json(state_path, new_state)
     markdown = render_markdown(report, args.policy)
+    if len(markdown) > MAX_MARKDOWN_LENGTH:
+        markdown = render_markdown(report, args.policy, compact=True)
     if args.report_json:
         write_json(args.report_json, report)
     if args.report_md:
