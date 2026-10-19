@@ -287,8 +287,13 @@ def merge_requirements(local: Path, upstream: Path, ref: str, dry_run: bool) -> 
     local_only = [line for key, (line, _) in local_reqs.items() if key not in upstream_reqs]
 
     if added and not dry_run:
-        separator = "" if local_text.endswith("\n") or not local_text else "\n"
-        block = f"{separator}\n# Added from sphinx-stack {ref}\n" + "".join(
+        if not local_text:
+            separator = ""
+        elif local_text.endswith("\n"):
+            separator = "\n"
+        else:
+            separator = "\n\n"
+        block = f"{separator}# Added from sphinx-stack {ref}\n" + "".join(
             f"{line}\n" for line in added
         )
         local.write_text(local_text + block, encoding="utf-8")
@@ -415,6 +420,8 @@ def sync(
                 detail += " Not covered by the sync policy."
             entry = add_entry(path, action, rule, status, detail)
         if path in tracked:
+            if entry["status"] not in ATTENTION_STATUSES:
+                entry["status"] = "untracked"
             entry["detail"] = " ".join(
                 filter(None, [entry["detail"], "Stopped tracking: no longer mirrored by policy."])
             )
@@ -667,6 +674,9 @@ def main(argv: list[str] | None = None) -> int:
     markdown = render_markdown(report, args.policy)
     if len(markdown) > MAX_MARKDOWN_LENGTH:
         markdown = render_markdown(report, args.policy, compact=True)
+    if len(markdown) > MAX_MARKDOWN_LENGTH:
+        note = "\n\n_Report truncated; see the JSON report for all entries._\n"
+        markdown = markdown[: MAX_MARKDOWN_LENGTH - len(note)] + note
     if args.report_json:
         write_json(args.report_json, report)
     if args.report_md:

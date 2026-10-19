@@ -241,6 +241,16 @@ class RequirementsMergeTests(SyncTestCase):
             .endswith("# Added from sphinx-stack 3.0\nnewpkg~=1.0  # needed for X\n")
         )
 
+    def test_empty_local_requirements_has_no_leading_blank_line(self):
+        write_tree(self.repo / "template", {"docs/requirements.txt": ""})
+        upstream = self.snapshot("up", {"docs/requirements.txt": "pkg\n"})
+
+        self.run_sync(upstream, {"version": 1, "mirrored": {}}, ref="3.0")
+
+        self.assertEqual(
+            self.local("docs/requirements.txt").read_text(), "# Added from sphinx-stack 3.0\npkg\n"
+        )
+
     def test_no_new_packages_leaves_file_untouched(self):
         content = "sphinx==8.0\n"
         write_tree(self.repo / "template", {"docs/requirements.txt": content})
@@ -307,6 +317,18 @@ class BootstrapTests(SyncTestCase):
         self.assertEqual(self.local("docs/Makefile").read_text(), "local\n")
         self.assertEqual(self.entry(report, "docs/Makefile")["status"], "conflict")
         self.assertEqual(new_state["mirrored"], {"docs/_dev/a": h("same")})
+
+    def test_policy_change_away_from_mirror_is_surfaced(self):
+        write_tree(self.repo / "template", {"docs/redirects.txt": "x"})
+        upstream = self.snapshot("up", {"docs/redirects.txt": "x"})
+        state = {"version": 1, "mirrored": {"docs/redirects.txt": h("x")}}
+
+        new_state, report = self.run_sync(upstream, state)
+
+        entry = self.entry(report, "docs/redirects.txt")
+        self.assertEqual(entry["status"], "untracked")
+        self.assertIn("Stopped tracking", entry["detail"])
+        self.assertEqual(new_state["mirrored"], {})
 
     def test_report_files_unchanged_upstream_are_quiet(self):
         upstream = self.snapshot("up", {"docs/conf.py": "a = 1\n", "new/thing.txt": "x"})
