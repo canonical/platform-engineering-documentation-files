@@ -1,0 +1,105 @@
+{
+  "_comment": [
+    "Declarative ownership policy for scripts/sync_sphinx_stack.py.",
+    "Every file in the upstream release snapshot is classified by the FIRST rule whose",
+    "'match' pattern matches its upstream-relative path. Patterns are case-sensitive;",
+    "'*' matches within one path segment and '**' matches any number of segments.",
+    "Actions:",
+    "  mirror   - upstream owns the file; copy verbatim and track it in the sync state.",
+    "             Locally modified copies are never overwritten or deleted; they are",
+    "             reported as conflicts instead.",
+    "  merge    - combine upstream changes with local content using 'handler'.",
+    "  preserve - the local copy is owned by this repository; never touch it.",
+    "  report   - list the file for manual review when it changes upstream.",
+    "  ignore   - upstream-only content that is not part of this template.",
+    "Files that match no rule are handled with the 'unmatched' action."
+  ],
+  "version": 1,
+  "upstream": "canonical/sphinx-stack",
+  "destination": "template",
+  "unmatched": "report",
+  "rules": [
+    {
+      "match": "docs/requirements.txt",
+      "action": "merge",
+      "handler": "requirements",
+      "reason": "Pins are managed locally (Renovate); only new upstream dependencies are added."
+    },
+    {
+      "match": "docs/conf.py",
+      "action": "report",
+      "reason": "Adapted into conf.py.jinja by the analyze-conf-py job."
+    },
+    {
+      "match": "docs/_dev/**",
+      "action": "mirror"
+    },
+    {
+      "match": "docs/_templates/**",
+      "action": "mirror"
+    },
+    {
+      "match": "docs/Makefile",
+      "action": "mirror"
+    },
+    {
+      "match": ".readthedocs.yaml",
+      "action": "mirror"
+    },
+    {
+      "match": "docs/redirects.txt",
+      "action": "preserve",
+      "reason": "Project-specific redirects; skipped for existing downstream projects."
+    },
+    {
+      "match": "docs/.gitignore",
+      "action": "report",
+      "reason": "Contains local additions; adapt upstream changes manually."
+    },
+    {
+      "match": "docs/_static/**",
+      "action": "report",
+      "reason": "Local static assets are templated; adapt upstream changes manually."
+    },
+    {
+      "match": "docs/**/*.rst",
+      "action": "ignore",
+      "reason": "Upstream sample documentation content."
+    },
+    {
+      "match": "docs/**/*.md",
+      "action": "ignore",
+      "reason": "Upstream sample documentation content."
+    },
+    {
+      "match": "docs/.custom_wordlist.txt",
+      "action": "ignore",
+      "reason": "Upstream project wordlist."
+    },
+    {
+      "match": ".github/**",
+      "action": "ignore",
+      "reason": "Upstream repository automation."
+    },
+    {
+      "match": "CHANGELOG.md",
+      "action": "ignore",
+      "reason": "Upstream repository metadata."
+    },
+    {
+      "match": "CONTRIBUTING.md",
+      "action": "ignore",
+      "reason": "Upstream repository metadata."
+    },
+    {
+      "match": "LICENSE",
+      "action": "ignore",
+      "reason": "Upstream repository metadata."
+    },
+    {
+      "match": "README.md",
+      "action": "ignore",
+      "reason": "Upstream repository metadata."
+    }
+  ]
+}

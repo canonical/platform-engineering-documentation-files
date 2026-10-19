@@ -18,6 +18,17 @@ jobs:
       - name: Run lint
         run: uvx tox -e lint
 
+  unit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10.1.0
+
+      - name: Run unit tests
+        run: uvx tox -e unit
+
   test:
     runs-on: ubuntu-24.04
     strategy:
