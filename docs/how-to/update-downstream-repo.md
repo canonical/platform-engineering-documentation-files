@@ -18,8 +18,8 @@ Copier will merge template changes into your repository, preserving your
 project-specific values from `.copier-answers.yml`. Review the diff, resolve
 any conflicts, and commit.
 
-If you've modified any of the files, Copier will show any conflicting changes
-for you to resolve.
+If you've modified any of the managed files, Copier may report merge conflicts
+for you to resolve. See [Resolve merge conflicts](#resolve-merge-conflicts) below.
 
 ## Automate updates with GitHub Actions
 
@@ -56,6 +56,50 @@ they are left inline for you to review and resolve before merging the changes.
 
 We recommend running the workflow on a schedule and leaving a `workflow_dispatch`
 trigger so you can start the update manually if needed.
+
+## Resolve merge conflicts
+
+`copier update` re-applies your repository's changes on top of the re-rendered
+template as a three-way merge. If you modified a managed file, merge conflicts can arise if the template
+affects the modified area. Copier does not resolve these for you:
+it writes both versions into the file between conflict markers and leaves them for
+you to resolve.
+
+For example, a `docs/conf.py` conflict looks like:
+
+```python
+<<<<<<< before updating
+intersphinx_mapping = {
+    "juju": ("https://canonical.com/juju/docs/juju-cli/3.6/", None),
+}
+=======
+intersphinx_mapping = {
+    "juju": ("https://canonical.com/juju/docs/juju-cli/3.6/", None),
+    "ops": ("https://documentation.ubuntu.com/ops/latest/", None),
+}
+>>>>>>> after updating
+```
+
+The section above `=======` is your current content; the section below it is the
+incoming template version. While the markers are present, a file that is executed
+at build time (such as `conf.py`) is invalid, so the documentation build fails until
+you resolve them.
+
+To resolve a conflict:
+
+1. Open each file that contains `<<<<<<<`, `=======`, and `>>>>>>>` markers.
+2. Edit the region to the result you want — keeping your changes, the template's
+   changes, or a combination — and delete all three marker lines.
+3. Rebuild the documentation to confirm the result is valid:
+
+   ```bash
+   make html
+   ```
+
+4. Commit the resolved files.
+
+When the update runs through the GitHub Actions workflow, perform these same steps
+on the pull request branch before merging it.
 
 ## Update project-specific values
 
