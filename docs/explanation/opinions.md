@@ -61,8 +61,8 @@ This is a conscious trade-off:
   example, an LLM agent) would multiply its cost by the number of repositories and
   the update frequency, and each repository would re-solve a variant of the same
   problem. We instead keep the intelligent, one-time work centralized in this
-  solution while keeping
-  the downstream propagation cheap and deterministic. Genuine conflicts are left to a human.
+  solution while keeping the downstream propagation cheap and deterministic.
+  Genuine conflicts are left to a human.
 
 Resolving a conflict by hand is expected. For the procedure,
 see [How to update a downstream repository](../how-to/update-downstream-repo.md).
