@@ -42,3 +42,27 @@ The primary purpose of this solution is to act as a single source of truth for t
 * Renovate noise is reduced in the downstream repositories. A single pull request from Renovate handles a dependency update in this solution, and a single pull request in the downstream repository handles multiple dependency updates within the update frequency.
 * We maintain consistency in styling and tooling across our repositories, relying on an automated process rather than manual updates. Repositories no longer fall through the cracks.
 * We can introduce common documentation (e.g., contributing guidelines) into all repositories.
+
+## Human-resolved merge conflicts
+
+Downstream repositories pull in updates with `copier update`, which re-renders the
+template and re-applies each repository's own changes on top as a three-way merge.
+When a downstream repository has modified a managed file and the template changes
+the same region, that merge can conflict. We deliberately **leave these conflicts
+for a human to resolve** rather than resolving them automatically.
+
+This is a conscious trade-off:
+
+* **Correctness over convenience.** A managed file such as `conf.py` is executed
+  at build time, so these files can break the documentation build.
+  A human reviewing the conflict is more reliable than an automated guess.
+* **Scalability of the process.** The downstream update runs across dozens of
+  repositories on a schedule. An automated, intelligent conflict resolver (for
+  example, an LLM agent) would multiply its cost by the number of repositories and
+  the update frequency, and each repository would re-solve a variant of the same
+  problem. We instead keep the intelligent, one-time work centralized in this
+  solution while keeping
+  the downstream propagation cheap and deterministic. Genuine conflicts are left to a human.
+
+Resolving a conflict by hand is expected. For the procedure,
+see [How to update a downstream repository](../how-to/update-downstream-repo.md).

@@ -28,6 +28,20 @@ affected files used in this solution, bumping `.sphinx-stack-version` in the pro
 A downstream repository manages its updates using `copier update` to pull in the changes.
 This solution contains a callable workflow to automatically detect and propagate the update.
 
+## Three-way merge and conflict resolution
+
+`copier update` re-renders the template at the new version and re-applies the
+downstream repository's own changes on top as a three-way merge. If a downstream
+repository has modified a managed file and the template changed the same region,
+the merge can conflict.
+
+Copier does not resolve such conflicts automatically. It writes both versions into
+the affected file between `<<<<<<<` and `>>>>>>>` conflict markers and leaves them
+inline for a human to review and resolve before the update is merged. Until the
+markers are resolved, a managed file that is executed at build time (such as
+`docs/conf.py`) is invalid, meaning the documentation
+build will fail until a human corrects the issues.
+
 > See also:
   [How to update a downstream repository](../how-to/update-downstream-repo.md)
 
