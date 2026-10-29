@@ -3,6 +3,7 @@ Copier
 favicon
 gatekeeping
 GitHub Actions
+intersphinx
 Makefile
 onboarding
 onboards

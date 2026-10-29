@@ -121,11 +121,12 @@ echo "  ✓ Copied fixtures to docs/"
 
 # Create placeholder files to avoid warnings from optional features:
 # - A minimal favicon so html_favicon doesn't warn about missing file
-# - An empty rediraffe_redirects so the redirect extension doesn't warn
+# - A real rediraffe redirect (old-reference -> reference) so the redirect
+#   extension is exercised rather than just loaded
 # - A .git repo so sphinx-last-updated-by-git can get commit dates
 touch "$TMPDIR/docs/_static/favicon.png"
 touch "$TMPDIR/docs/_static/tag.png"
-touch "$TMPDIR/docs/redirects.txt"
+echo "old-reference reference" > "$TMPDIR/docs/redirects.txt"
 git -C "$TMPDIR" init --quiet
 git -C "$TMPDIR" add --all
 git -C "$TMPDIR" -c user.name="Test Build" -c user.email="test-build@example.invalid" commit --quiet -m "Test content"
@@ -142,4 +143,78 @@ cd "$TMPDIR/docs"
 make html
 
 echo ""
+
+# ── Step 5: Assert expected output artifacts ────────────────────
+echo "--- Verifying build output artifacts ---"
+
+BUILD_DIR="$TMPDIR/docs/_build"
+
+# assert_file <path> <description>
+assert_file() {
+    if [[ ! -f "$1" ]]; then
+        echo "FAIL: Expected artifact missing: $2 ($1)" >&2
+        exit 1
+    fi
+    echo "  ✓ $2"
+}
+
+# assert_grep <pattern> <file> <description>
+assert_grep() {
+    if ! grep -q "$1" "$2" 2>/dev/null; then
+        echo "FAIL: Expected content not found: $3 (pattern '$1' in $2)" >&2
+        exit 1
+    fi
+    echo "  ✓ $3"
+}
+
+# Core generated files
+assert_file "$BUILD_DIR/llms.txt" "sphinx-llm generated llms.txt"
+assert_file "$BUILD_DIR/doc-sitemap.xml" "sphinx-sitemap generated doc-sitemap.xml"
+assert_file "$BUILD_DIR/404/index.html" "sphinx-notfound-page generated 404 page"
+assert_file "$BUILD_DIR/old-reference/index.html" "rediraffe generated redirect page"
+
+# Sitemap references the built pages
+assert_grep "reference" "$BUILD_DIR/doc-sitemap.xml" "sitemap includes the reference page URL"
+
+# Mermaid diagrams rendered on the extensions page
+assert_grep "mermaid" "$BUILD_DIR/extensions/index.html" "mermaid diagram rendered"
+assert_grep "C4Context" "$BUILD_DIR/extensions/index.html" "C4Context mermaid diagram rendered"
+
+# OpenGraph metadata injected into the page head
+assert_grep 'property="og:' "$BUILD_DIR/index.html" "sphinxext-opengraph injected og: meta tags"
+
+# Extension-specific output on the extensions page
+EXT_PAGE="$BUILD_DIR/extensions/index.html"
+assert_grep "sd-card" "$EXT_PAGE" "sphinx-design card rendered"
+assert_grep "sphinx-tabs" "$EXT_PAGE" "sphinx-tabs rendered"
+assert_grep "terminal" "$EXT_PAGE" "sphinx-terminal rendered"
+assert_grep "youtube_link" "$EXT_PAGE" "sphinx-youtube-links rendered"
+assert_grep "relatedlinks" "$EXT_PAGE" "sphinx-related-links rendered"
+
+echo ""
+
+# ── Step 6: Assert the warnings log is empty ────────────────────
+echo "--- Verifying warnings log is empty ---"
+
+WARNINGS_FILE="$TMPDIR/docs/_dev/warnings.txt"
+if [[ -s "$WARNINGS_FILE" ]]; then
+    echo "FAIL: Sphinx produced warnings:" >&2
+    cat "$WARNINGS_FILE" >&2
+    exit 1
+fi
+echo "  ✓ No warnings recorded in $WARNINGS_FILE"
+
+echo ""
+
+# ── Step 7 (optional): Check external links ─────────────────────
+# Opt-in because it depends on external network availability and third-party
+# sites; intended to run as a separate, non-blocking CI job. Validates the
+# template's linkcheck configuration and the intersphinx mapping.
+if [[ "${RUN_LINKCHECK:-0}" == "1" ]]; then
+    echo "--- Checking external links (make linkcheck) ---"
+    make linkcheck
+    echo "  ✓ Link check completed"
+    echo ""
+fi
+
 echo "=== PASS ($SCENARIO): Build succeeded with no warnings or errors ==="
