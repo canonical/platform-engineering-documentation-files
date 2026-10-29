@@ -71,7 +71,7 @@ pull requests.
 * Minimal scenario (only required fields): `bash tests/test_build.sh minimal`
 
 To additionally run the external link check (optional; depends on network access and
-third-party sites, so it runs as a separate non-blocking CI job):
+third-party sites, so it is kept out of the default CI run):
 
 * `RUN_LINKCHECK=1 bash tests/test_build.sh`
 
