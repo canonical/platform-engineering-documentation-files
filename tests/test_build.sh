@@ -176,9 +176,9 @@ assert_file "$BUILD_DIR/old-reference/index.html" "rediraffe generated redirect 
 # Sitemap references the built pages
 assert_grep "reference" "$BUILD_DIR/doc-sitemap.xml" "sitemap includes the reference page URL"
 
-# Mermaid diagrams rendered on the reference page
-assert_grep "mermaid" "$BUILD_DIR/reference/index.html" "mermaid diagram rendered"
-assert_grep "C4Context" "$BUILD_DIR/reference/index.html" "C4Context mermaid diagram rendered"
+# Mermaid diagrams rendered on the extensions page
+assert_grep "mermaid" "$BUILD_DIR/extensions/index.html" "mermaid diagram rendered"
+assert_grep "C4Context" "$BUILD_DIR/extensions/index.html" "C4Context mermaid diagram rendered"
 
 # OpenGraph metadata injected into the page head
 assert_grep 'property="og:' "$BUILD_DIR/index.html" "sphinxext-opengraph injected og: meta tags"

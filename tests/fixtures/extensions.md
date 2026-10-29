@@ -11,6 +11,32 @@ This page exercises the directives and roles provided by the extensions bundled
 in the template's `requirements.txt`, so that a broken, removed, or
 misconfigured extension fails the build.
 
+## sphinxcontrib-mermaid
+
+The following diagram exercises the `sphinxcontrib-mermaid` extension. It is
+written as a plain ` ```mermaid ` fence, which `myst_fence_as_directive`
+promotes to the `{mermaid}` directive:
+
+```mermaid
+graph LR
+    A[Author] --> B[Copier template]
+    B --> C[Sphinx build]
+    C --> D[Published docs]
+```
+
+A second diagram uses Mermaid's `C4Context` syntax to confirm that the bundled
+Mermaid version renders C4 model diagrams:
+
+```mermaid
+C4Context
+    title System context for TestProject docs
+    Person(author, "Author", "Writes documentation")
+    System(template, "Copier template", "Generates the Sphinx scaffold")
+    System_Ext(rtd, "Read the Docs", "Builds and hosts the docs")
+    Rel(author, template, "Runs copier copy")
+    Rel(template, rtd, "Provides build config")
+```
+
 ## sphinx-design
 
 ````{grid} 1 1 2 2
