@@ -247,10 +247,5 @@ command.
   names trip the style checker.
 - **"relation" is the noun, "integrate" is the verb** — use `juju integrate`, not
   the deprecated `juju relate`; avoid "relate" as a verb.
-- **Capitalize product names** outside code (Juju, Kubernetes, MicroK8s, Git,
-  Ubuntu), and use a product's preferred full name (for example Canonical
-  Kubernetes).
-- **US English** throughout the documentation files.
-- **Avoid style-guide "words to avoid"** (for example "execute").
 - **Keep redirects in step with file moves** — when a tutorial file is
   renamed/moved, the `conf.py` `redirects` are updated so link-check passes.
