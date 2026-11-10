@@ -10,4 +10,5 @@ myst:
 :maxdepth: 2
 
 reference
+extensions
 ```
