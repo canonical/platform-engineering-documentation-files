@@ -42,7 +42,7 @@ classified by the first matching rule in the declarative ownership policy,
 | `ignore` | Upstream-only content that isn't part of the template. |
 
 Files that match no rule are reported for review. To change how a path is handled,
-edit the policy file; the workflow doesn't need to change.
+edit the policy file, not the workflow.
 
 Mirrored files are recorded, with the hash of the content last synced, in
 `scripts/sphinx_stack_sync_state.json` (created by the first sync). This

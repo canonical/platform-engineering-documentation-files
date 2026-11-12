@@ -63,7 +63,7 @@ jobs:
       - uses: actions/setup-python@v7
         if: steps.check.outputs.sync == 'true'
         with:
-          python-version: "3.14"
+          python-version: "3.15"
 
         # Downloads the full upstream release snapshot and applies the ownership
         # policy in scripts/sphinx_stack_sync_policy.json. No upstream file names
