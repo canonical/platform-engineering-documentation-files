@@ -1,8 +1,8 @@
 name: Sync from sphinx-stack
 
 on:
-#  schedule:
-#    - cron: "0 6 * * 6" # Weekly on Saturday at 6 AM UTC
+  schedule:
+    - cron: "0 6 * * 6" # Weekly on Saturday at 6 AM UTC
   workflow_dispatch:
 
 permissions:
