@@ -59,9 +59,20 @@ To make changes to the template itself:
 The repository includes an integration test that validates the template generates a
 working Sphinx documentation project. It runs `copier copy` with two answer scenarios
 and builds the output with `make html`, which is configured to fail on any warning.
-The tests run locally and are required to pass on all pull requests.
+The test injects fixture pages that exercise the bundled Sphinx extensions (Mermaid
+diagrams including `C4Context`, sphinx-design, sphinx-tabs, sphinx-terminal,
+sphinx-config-options, sphinx-youtube-links, sphinx-roles, related links, redirects,
+and an intersphinx cross-reference) and then asserts that the expected output
+artifacts were generated (`llms.txt`, the sitemap, the 404 page, redirect pages, and
+the rendered extension output). The tests run locally and are required to pass on all
+pull requests.
 
 * Full scenario (all fields populated): `bash tests/test_build.sh`
 * Minimal scenario (only required fields): `bash tests/test_build.sh minimal`
+
+To additionally run the external link check (optional; depends on network access and
+third-party sites, so it is kept out of the default CI run):
+
+* `RUN_LINKCHECK=1 bash tests/test_build.sh`
 
 **Requirements**: Python 3.10+ with the `venv` module, Git 2.27+, GNU Make, and Copier (`pipx install copier`).
